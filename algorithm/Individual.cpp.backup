@@ -1,8 +1,6 @@
 #include <list>
 #include <vector>
 #include "PatientsData.cpp"
-#include <iostream>
-#include <cstdlib>
 
 using namespace std;
 
@@ -435,35 +433,5 @@ class Individual{
 			available_time.push_back(aux);
 		}
 	}
-	
-	bool insert_schedul(int pat, std::vector < std::pair< int, int > > s, PatientsData * patData){
-		if(s.empty()){
-			return false;
-		}
-		for(unsigned int i = 0; i < s.size(); i++){
-			//cout << time_machine_i(s[i].second, s[i].first) << endl;
-			assign_time_machine(s[i].second, s[i].first, patData[pat - 1].duration_session);
-			schedul[pat -1].push_back(make_pair(s[i].first, s[i].second));
-		}
-		//exit(0);
-		return true;
-	}
-	
-	//Asignar tiempo a una maquina en cierto dia especifico
-	  void assign_time_machine(int machine_i, int day, float time){
-		for(std::list< std::pair<int, float> >::iterator it = available_time[machine_i].begin(); it != available_time[machine_i].end(); it++){
-			if((*it).first == day){
-				(*it).second -= time;
-				//cout << "Desconto: " << time << endl;
-				if((*it).second == 0.0){
-					available_time[machine_i].erase(it);
-				}
-				else if((*it).second < 0.0){
-					cout << "Error. Se sobrepaso el tiempo dispoinible de la maquina" << endl;
-					exit(0);
-				}
-				return ;
-			}
-		}
-	}
+  
 };

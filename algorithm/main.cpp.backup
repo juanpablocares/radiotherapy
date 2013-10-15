@@ -122,34 +122,34 @@ int main(int argc, char *argv[])
 	    //Ordenar los pacientes segun el factor a utilizar
 	    std::sort(list_patients.begin(), list_patients.end(), order_factor);
 	    
-	    for(int i = 0; i < (int)list_patients.size(); i++){
+	    for(int i = 0; i < list_patients.size(); i++){
 	      
 		    std::vector < std::pair< int, int > > s;
 		    
-		    if(list_patients[i].first <= nEme){
+		    if(list_patient[j] <= nEme){
 			  float r = random_0_1();
 			  if(r < p_eme)
-				s = aux.asap_algorithm(list_patients[i].first + 1, patientsData);
+				s = aux.asap_algorithm(list_patient[j] + 1, patientsData);
 			  else
-				s = aux.jit_algorithm(list_patients[i].first + 1, patientsData);
+				s = aux.jit_algorithm(list_patient[j] + 1, patientsData);
 		    }
-		    else if(list_patients[i].first <= nEme + nPal){
+		    else if(list_patient[j] <= nEme + nPal){
 			  float r = random_0_1();
 			  if(r < p_pal)
-				s = aux.asap_algorithm(list_patients[i].first + 1, patientsData);
+				s = aux.asap_algorithm(list_patient[j] + 1, patientsData);
 			  else
-				s = aux.jit_algorithm(list_patients[i].first + 1, patientsData);
+				s = aux.jit_algorithm(list_patient[j] + 1, patientsData);
 		    }
 		    else{
 			  float r = random_0_1();
 			  if(r < p_rad)
-				s = aux.asap_algorithm(list_patients[i].first + 1, patientsData);
+				s = aux.asap_algorithm(list_patient[j] + 1, patientsData);
 			  else
-				s = aux.jit_algorithm(list_patients[i].first+ 1, patientsData);
+				s = aux.jit_algorithm(list_patient[j] + 1, patientsData);
 		    }
 		    
 		    if(!s.empty()){
-			  aux.insert_schedul(list_patients[i].first + 1, s, patientsData);
+			  aux.insert_schedul(list_patient[j], s, patientsData);
 		    }
 	    }
       }
