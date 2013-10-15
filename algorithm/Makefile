@@ -6,9 +6,9 @@ seed=1
 iterations=100
 restarts=5
 p_insert_eliminate=0.1
-p_eme=0.0
-p_pal=0.0
-p_rad=0.0
+p_eme=0.5
+p_pal=0.5
+p_rad=0.5
 instance=test/case100_2521980
 
 all: main

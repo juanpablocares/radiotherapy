@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
       float p_eme = atof(argv[5]);
       float p_pal = atof(argv[6]);
       float p_rad = atof(argv[7]);
-      int nDays = 60;
+      int nDays = 600;
       //Fin parametros algoritmo
       
       //Lectura de archivo de entrada
@@ -86,8 +86,7 @@ int main(int argc, char *argv[])
       
       
       
-      
-      
+
       
       
       //Inicializar semilla
@@ -126,14 +125,14 @@ int main(int argc, char *argv[])
 	      
 		    std::vector < std::pair< int, int > > s;
 		    
-		    if(list_patients[i].first <= nEme){
+		    if(list_patients[i].first + 1 <= nEme){
 			  float r = random_0_1();
 			  if(r < p_eme)
 				s = aux.asap_algorithm(list_patients[i].first + 1, patientsData);
 			  else
 				s = aux.jit_algorithm(list_patients[i].first + 1, patientsData);
 		    }
-		    else if(list_patients[i].first <= nEme + nPal){
+		    else if(list_patients[i].first + 1 <= nEme + nPal){
 			  float r = random_0_1();
 			  if(r < p_pal)
 				s = aux.asap_algorithm(list_patients[i].first + 1, patientsData);
@@ -152,6 +151,7 @@ int main(int argc, char *argv[])
 			  aux.insert_schedul(list_patients[i].first + 1, s, patientsData);
 		    }
 	    }
+	    
       }
       
       return 0;

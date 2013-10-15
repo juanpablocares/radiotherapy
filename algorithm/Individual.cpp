@@ -289,8 +289,9 @@ class Individual{
 				
 				if(sessions <= 5){
 
-					while(!fit_week(pat, day, patData) && day > 0){
+					while(!fit_week(pat, day, patData) && day > 1){
 						day --;
+
 						if(saturday(day)){
 							day -= 1;
 						}
@@ -298,8 +299,9 @@ class Individual{
 							day -= 2;
 						}
 					}
+					
 					if(day <= 0){
-						cout << "No se pudo crear una solucion con el JIT en el paciente " << pat + 1 << " en el dia " << day << endl;
+						//cout << "No se pudo crear una solucion con el JIT en el paciente " << pat + 1 << " en el dia " << day << endl;
 						return asap_algorithm(pat, patData);
 						//show_info_patient(pat, patData);
 						//show_scheduling();
