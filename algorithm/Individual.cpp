@@ -156,6 +156,7 @@ class Individual{
 		int category = patData[pat - 1].category;
 		int sessions = patData[pat - 1].nSessions;
 		bool max_interruptions;
+
 		std::vector < std::pair< int, int > > assignments;
 		
 		do{
@@ -205,13 +206,15 @@ class Individual{
 						}
 						else{
 							interruptions++;
+							if(pat == 51){
+								cout << "CTM " << time_machine_i(mach, aux_day) << endl;
+							}
 							//cout << "Int: " << interruptions << " " << patData[pat - 1].interruptions << endl; 
 							if(interruptions <= patData[pat - 1].interruptions){
 								aux_day = next_day(aux_day, pat);
 							}
 						}
 					}
-					//Fin agregacion
 					else{
 						if(time_machine_i(mach, aux_day) >= patData[pat-1].duration_session){
 							assignments.push_back(make_pair(aux_day, mach));
@@ -238,8 +241,9 @@ class Individual{
 			count_days++;
 			if(count_days + patData[pat - 1].initialTreatmentDate + patData[pat - 1].nSessions - 1 > days){
 				assignments.clear();
+				cout << "entro aca" << endl;
 				return assignments;
-				cout << "Se supero el numero maximo de dias en el asap para el paciente " << pat << endl;
+				//cout << "Se supero el numero maximo de dias en el asap para el paciente " << pat << endl;
 				//cout << day << endl;
 				//show_info_patient(pat, patData);
 				//show_scheduling();
@@ -262,7 +266,7 @@ class Individual{
 		//for(unsigned int i = 0; i < assignments.size(); i++){
 		//	assign_time_machine(assignments[i].second, assignments[i].first, patData[pat -1].duration_session);
 		//}
-		
+
 		return assignments;
 	}
 	
@@ -294,7 +298,7 @@ class Individual{
 	  
 		if(patData[pat - 1].category == 1)
 			emergency++;
-		else if(patData[pat - 1].category == 1)
+		else if(patData[pat - 1].category == 2)
 			palliative++;
 		else
 			radical++;
@@ -302,7 +306,9 @@ class Individual{
 		if(pat > (int)schedul.size())
 		      schedul.resize(pat);
 		
-		for(unsigned int i = 0; i < s.size(); i++){
+		assign_time_machine(s[0].second, s[0].first, patData[pat - 1].first_session);
+		schedul[pat -1].push_back(make_pair(s[0].first, s[0].second));
+		for(unsigned int i = 1; i < s.size(); i++){
 			//cout << time_machine_i(s[i].second, s[i].first) << endl;
 			assign_time_machine(s[i].second, s[i].first, patData[pat - 1].duration_session);
 			schedul[pat -1].push_back(make_pair(s[i].first, s[i].second));
@@ -313,13 +319,12 @@ class Individual{
 	  void assign_time_machine(int machine_i, int day, float time){
 		for(std::list< std::pair<int, float> >::iterator it = available_time[machine_i].begin(); it != available_time[machine_i].end(); it++){
 			if((*it).first == day){
-				(*it).second -= time;
 				//cout << "Desconto: " << time << endl;
 				if((*it).second == 0.0){
 					available_time[machine_i].erase(it);
 				}
 				else if((*it).second < 0.0){
-					cout << "Error. Se sobrepaso el tiempo dispoinible de la maquina" << endl;
+					cout << "Error. Se sobrepaso el tiempo disponible de la maquina" << endl;
 					exit(0);
 				}
 				return ;
@@ -338,5 +343,17 @@ class Individual{
 			}
 			cout << endl;
 		}
+	}
+	
+	int getEmergency(){
+		return emergency;
+	}
+	
+	int getPalliative(){
+		return palliative;
+	}
+	
+	int getRadical(){
+		return radical;
 	}
 };
