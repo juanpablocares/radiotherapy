@@ -83,7 +83,7 @@ class Individual{
 	}
 	
 	//Funcion que dice si se puede asignar a un paciente en una semana con respecto al día
-	bool fit_week(int pat, int day, PatientsData * patData){
+	bool fit_week(int pat, int day, vector<PatientsData> patData){
 		
 		int i = 0;
 		int max_mach = low_mach;
@@ -149,11 +149,10 @@ class Individual{
 	
 	public:
 	
-	  //Funcion asap de petrovic
-	//Se basa en la planificacion realizada intentando planificar un nuevo paciente con su respectiva informacion
-	std::vector < std::pair< int, int > > asap_algorithm(int pat, PatientsData * patData){
+	//Retorna un vector de largo cero en caso de no poder insertar al paciente
+	std::vector < std::pair< int, int > > try_insert(int pat, int initial_day, vector <PatientsData> patData){
 		int count_days = 0;
-		int day = patData[pat - 1].initialTreatmentDate;
+		int day = initial_day;
 		int category = patData[pat - 1].category;
 		int sessions = patData[pat - 1].nSessions;
 		bool max_interruptions;
@@ -247,6 +246,8 @@ class Individual{
 				exit(0);
 			}
 			else if(assignments.size() != (unsigned int)patData[pat - 1].nSessions){
+				assignments.clear();
+				return assignments;
 				day = next_day(count_days + patData[pat - 1].initialTreatmentDate, pat);
 				max_interruptions = true;
 			}
@@ -265,164 +266,15 @@ class Individual{
 		return assignments;
 	}
 	
-	//Algoritmo jit petrovic
-	//Similar al anterior
-	std::vector < std::pair< int, int > > jit_algorithm(int pat, PatientsData * patData){
-		int count_days = 0;
-		int day = patData[pat - 1].finalTreatmentDate;
-		int category = patData[pat - 1].category;
-		int sessions = patData[pat - 1].nSessions;
-		bool max_interruptions;
-		
-		std::vector < std::pair< int, int > > assignments;
-		
-		do{
-		  
-			if(category != 1){
-			  
-				if(saturday(day)){
-					day += 2;
-				}
-				else if(sunday(day)){
-					day += 1;
-				}
-				
-				if(sessions <= 5){
-
-					while(!fit_week(pat, day, patData) && day > 1){
-						day --;
-
-						if(saturday(day)){
-							day -= 1;
-						}
-						else if(sunday(day)){
-							day -= 2;
-						}
-					}
-					
-					if(day <= 0){
-						//cout << "No se pudo crear una solucion con el JIT en el paciente " << pat + 1 << " en el dia " << day << endl;
-						return asap_algorithm(pat, patData);
-						//show_info_patient(pat, patData);
-						//show_scheduling();
-						exit(0);
-					}
-				}
-
-				if(category == 3 && friday(day)){
-				
-					int mach = 0;
-					int max_mach = low_mach;
-					bool assigned = false;
-					int aux_day = day;
-					if(patData[pat - 1].machine == 2){
-						mach = low_mach;
-						max_mach = low_mach + high_mach;
-					}
-					
-					do{
-						aux_day = day;
-						if(time_machine_i(mach, aux_day) < patData[pat-1].duration_session){
-							aux_day = aux_day - 2;
-							assigned = true;
-						}
-						mach++;
-					}while(mach < max_mach && !assigned);
-						if(!assigned)
-							day = day - 1;
-						else
-							day = day - 2;
-				}
-			}
-
-			//Probar si se puede asignar las sesiones
-			int interruptions = 0;
-			
-			int mach = 0;
-			int max_mach = low_mach;
-			
-			if(patData[pat - 1].machine == 2){
-				mach = low_mach;
-				max_mach = low_mach + high_mach;
-			}
-			
-			do{
-				int aux_day = day;
-				interruptions = 0;
-				assignments.clear();
-				
-				do{
-					//Si la capacidad de la maquina es mayor a la necesaria para el tratamiento
-					if(assignments.size() == 0){
-						if(time_machine_i(mach, aux_day) >= patData[pat-1].first_session){
-							assignments.push_back(make_pair(aux_day, mach));
-							//cout << day << " " << mach << endl;
-							aux_day = next_day(aux_day, pat);
-						}
-						else{
-							interruptions++;
-							//cout << "Int: " << interruptions << " " << patData[pat - 1].interruptions << endl; 
-							if(interruptions <= patData[pat - 1].interruptions){
-								aux_day = next_day(aux_day, pat);
-							}
-						}
-					}
-					else{
-						if(time_machine_i(mach, aux_day) >= patData[pat-1].duration_session){
-							assignments.push_back(make_pair(aux_day, mach));
-							//cout << day << " " << mach << endl;
-							aux_day = next_day(aux_day, pat);
-						}
-						else{
-							interruptions++;
-							//cout << "Int: " << interruptions << " " << patData[pat - 1].interruptions << endl; 
-							if(interruptions <= patData[pat - 1].interruptions){
-								aux_day = next_day(aux_day, pat);
-							}
-						}
-					}
-				
-				}while(assignments.size() < (unsigned int)patData[pat - 1].nSessions && interruptions <= patData[pat - 1].interruptions);
-				
-				mach ++;
-				
-			}while(mach < max_mach && !(assignments.size() == (unsigned int)patData[pat - 1].nSessions && interruptions <= patData[pat - 1].interruptions));
-			
-			//Se supero el numero maximo de interrupciones
-			max_interruptions = false;
-			count_days++;
-			if(patData[pat - 1].finalTreatmentDate - count_days < patData[pat - 1].initialTreatmentDate){
-				return asap_algorithm(pat, patData);
-			}
-			else if(assignments.size() != (unsigned int)patData[pat - 1].nSessions){
-				day = one_day_before(patData[pat - 1].finalTreatmentDate - count_days, pat);
-				max_interruptions = true;
-			}
-			
-		}while(max_interruptions);
-		
-		//showSchedulPatience(assignments);
-		
-		//Asignar los tiempos calculados a las maquinas
-		//Agregar el primer tiempo de ser necesario
-		//for(unsigned int i = 0; i < assignments.size(); i++){
-		//	assign_time_machine(assignments[i].second, assignments[i].first, patData[pat -1].duration_session);
-		//}
-		
-		return assignments;
-	}
-	  
-	void set_params(float nshifts, int ndays, int l_mach, int h_mach, PatientsData * patData, int nE, int nP, int nR, int first_day){
-		this->emergency = nE;
-		this->palliative = nP;
-		this->radical = nR;
+	void set_params(float nshifts, int ndays, int l_mach, int h_mach, int first_day){
+		this->emergency = 0;
+		this->palliative = 0;
+		this->radical = 0;
 		this->shifts = nshifts;
 		this->days = ndays;
 		this->high_mach = h_mach;
 		this->low_mach = l_mach;
 		this->first_day_week = first_day;
-		schedul.resize(nE + nP + nR);
-		interruptions_pat.resize(nE + nP + nR);
 	}
 	
 	//Iniciar las maquinas con los tiempos
@@ -438,17 +290,23 @@ class Individual{
 		}
 	}
 	
-	bool insert_schedul(int pat, std::vector < std::pair< int, int > > s, PatientsData * patData){
-		if(s.empty()){
-			return false;
-		}
+	void insert_schedul(int pat, std::vector < std::pair< int, int > > s, vector<PatientsData> patData){
+	  
+		if(patData[pat - 1].category == 1)
+			emergency++;
+		else if(patData[pat - 1].category == 1)
+			palliative++;
+		else
+			radical++;
+		
+		if(pat > (int)schedul.size())
+		      schedul.resize(pat);
+		
 		for(unsigned int i = 0; i < s.size(); i++){
 			//cout << time_machine_i(s[i].second, s[i].first) << endl;
 			assign_time_machine(s[i].second, s[i].first, patData[pat - 1].duration_session);
 			schedul[pat -1].push_back(make_pair(s[i].first, s[i].second));
 		}
-		//exit(0);
-		return true;
 	}
 	
 	//Asignar tiempo a una maquina en cierto dia especifico
@@ -466,6 +324,19 @@ class Individual{
 				}
 				return ;
 			}
+		}
+	}
+	
+	void show_vector(){
+		cout << (int)schedul.size() << endl;
+	  
+		for(int i = 0; i < (int)schedul.size(); i++){
+			cout << (int)schedul[i].size() << " " ;
+			for(int j = 0; j < (int)schedul[i].size(); j++){
+				cout << schedul[i][j].first << " " ;
+				cout << schedul[i][j].second << " " ;
+			}
+			cout << endl;
 		}
 	}
 };
