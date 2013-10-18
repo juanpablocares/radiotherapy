@@ -111,18 +111,17 @@ int main(int argc, char *argv[])
 {
 	/*Datos por entrada*/
 	int groupEme, groupPal, groupRad, total_pat, nDays, nMach_high, nMach_low, seed;
-	int delta_days = 7;
+	
 	float nShifts, nEme, nPal, nRad;
 	
 	/*Inicializar semilla*/
 	seed = atoi(argv[1]);
 	srand(seed);
-	cin >> nDays;
-	cout << nDays << endl;
+	nDays = 30;
 	/*******************Leer entrada*******************/
 	
 	//Numero total pacientes
-	//cin >> total_pat;
+	cin >> total_pat;
 	
 	//Proporcion de pacientes Urgentes
 	cin >> nEme;
@@ -191,14 +190,11 @@ int main(int argc, char *argv[])
 	
 	//Numero total para un día de tratamientos
 	cin >> nShifts;
-	cout << nShifts << endl;
 	
 	//Número de maquinas
 	cin >> nMach_low;
-	cout << nMach_low << " ";
 	cin >> nMach_high;
-	cout << nMach_high << endl << endl;
-	
+
 	//Maquinas Urgente
 	float mach_eme;
 	cin >> mach_eme;
@@ -214,10 +210,10 @@ int main(int argc, char *argv[])
 	/*******************Fin Leer entrada*******************/
 	
 	std::vector<PatientsData> list_patients;
-	for(int j = 1; j <= nDays; j++){
+	for(int j = 1; j <= days; j++){
 	  
 		list_patients.clear();
-		total_pat = random_generator(0, 5);
+		
 		for(int i = 1; i <= total_pat; i++){
 			
 			PatientsData aux;
@@ -249,7 +245,7 @@ int main(int argc, char *argv[])
 			int r = 0;
 			int beg = 0;
 			
-			r = j + 1 + ((double)(delta_days) * (rand() / ((double) RAND_MAX)));
+			r = 1 + ((double)(nDays - 1) * (rand() / ((double) RAND_MAX)));
 				
 			if(type == 1)
 				beg = r + 1;
@@ -258,12 +254,32 @@ int main(int argc, char *argv[])
 			else
 				beg = r + 27;
 			
-			aux.initialTreatmentDate = r;
-			aux.finalTreatmentDate = beg;
+			int ran = random_generator(1, sessions - 1);
+			//int ran = 0;
+			
+			
+			beg = beg + ran;
+			r = r + ran;
+			
+			if(beg < 1)
+				beg = 1;
+			if(r < 1)
+				r = 1;
+			
+			if(beg < r){
+				//scout << beg << " " << r << " " ;
+				aux.initialTreatmentDate = beg;
+				aux.finalTreatmentDate = r;
+			}
+			else{
+				//cout << r << " " << beg << " " ;
+				aux.initialTreatmentDate = r;
+				aux.finalTreatmentDate = beg;
+			}
 			
 			//Numero de dias atrasado
 			//cout << ran << " ";
-			aux.delay = 0;
+			aux.delay = ran;
 			
 			//Numero sesiones
 			//cout << sessions << " ";
@@ -315,20 +331,18 @@ int main(int argc, char *argv[])
 			list_patients.push_back(aux);
 		}
 		
-		//cout << "D" << j << " " << list_patients.size() << endl;
-		cout << list_patients.size() << endl;
+		cout << "D" << j << endl << endl;
 		
 		for(int i = 0; i <total_pat; i++){
 			cout << list_patients[i].type << " " ;
 			cout << list_patients[i].initialTreatmentDate << " " ;
 			cout << list_patients[i].finalTreatmentDate << " " ;
-			//cout << list_patients[i].delay << " " ;
+			cout << list_patients[i].delay << " " ;
 			cout << list_patients[i].nSessions << " " ;
 			cout << list_patients[i].interruptions << " " ;
 			cout << list_patients[i].machine << " " ;
-			cout << list_patients[i].time_ses << endl;
+			cout << list_patients[i].time_ses << endl ;
 		}
-		cout << endl;
 	}
 	std::sort(list_patients.begin(), list_patients.end(), sort_list_patients);
 	
