@@ -82,6 +82,7 @@ class Individual{
 		return 0;
 	}
 	
+	
 	//Funcion que dice si se puede asignar a un paciente en una semana con respecto al día
 	bool fit_week(int pat, int day, vector<PatientsData> patData){
 		
@@ -149,7 +150,123 @@ class Individual{
 	
 	public:
 	
-	
+	//Retorna un vector de largo cero en caso de no poder insertar al paciente
+        std::vector < std::pair< int, int > > try_insert(int pat, int machine, int initial_day, vector <PatientsData> patData){
+                int count_days = 0;
+                int day = initial_day;
+                int category = patData[pat - 1].category;
+                int sessions = patData[pat - 1].nSessions;
+                bool max_interruptions;
+
+                std::vector < std::pair< int, int > > assignments;
+                
+                do{
+                        if(category != 1){
+                          
+                                if(saturday(day)){
+                                        day += 2;
+                                }
+                                else if(sunday(day)){
+                                        day += 1;
+                                }
+                                
+                                
+                                if(sessions <= 5 && !fit_week(pat, day, patData)){
+                                        day = next_monday(day);
+                                }
+
+                                if(category == 3 && friday(day)){
+                                        day = next_monday(day);
+                                }
+                        }
+
+                        //Probar si se puede asignar las sesiones
+                        int interruptions = 0;
+                        
+                        int mach = 0;
+                        int max_mach = low_mach;
+                        
+                        if(patData[pat - 1].machine == 2){
+                                mach = low_mach;
+                                max_mach = low_mach + high_mach;
+                        }
+                        
+                        do{
+                                int aux_day = day;
+                                interruptions = 0;
+                                assignments.clear();
+                                
+                                do{
+                                        //Si la capacidad de la maquina es mayor a la necesaria para el tratamiento
+                                        //Agregado para considerar mas tiempo en la primera sesion
+                                        if(assignments.size() == 0){
+                                                if(time_machine_i(mach, aux_day) >= patData[pat-1].first_session){
+                                                        assignments.push_back(make_pair(aux_day, mach));
+                                                        //cout << day << " " << mach << endl;
+                                                        aux_day = next_day(aux_day, pat);
+                                                }
+                                                else{
+                                                        interruptions++;
+                                                        //cout << "Int: " << interruptions << " " << patData[pat - 1].interruptions << endl; 
+                                                        if(interruptions <= patData[pat - 1].interruptions){
+                                                                aux_day = next_day(aux_day, pat);
+                                                        }
+                                                }
+                                        }
+                                        else{
+                                                if(time_machine_i(mach, aux_day) >= patData[pat-1].duration_session){
+                                                        assignments.push_back(make_pair(aux_day, mach));
+                                                        //cout << day << " " << mach << endl;
+                                                        aux_day = next_day(aux_day, pat);
+                                                }
+                                                else{
+                                                        interruptions++;
+                                                        //cout << "Int: " << interruptions << " " << patData[pat - 1].interruptions << endl; 
+                                                        if(interruptions <= patData[pat - 1].interruptions){
+                                                                aux_day = next_day(aux_day, pat);
+                                                        }
+                                                }
+                                        }
+                                
+                                }while((assignments.size() < (unsigned int)patData[pat - 1].nSessions && interruptions <= patData[pat - 1].interruptions));
+                                
+                                mach ++;
+                                
+                        }while(mach < max_mach && !(assignments.size() == (unsigned int)patData[pat - 1].nSessions && interruptions <= patData[pat - 1].interruptions));
+                        
+                        //Se supero el numero maximo de interrupciones
+                        max_interruptions = false;
+                        count_days++;
+                        if(count_days + patData[pat - 1].initialTreatmentDate + patData[pat - 1].nSessions - 1 > days){
+                                assignments.clear();
+                                cout << "entro aca" << endl;
+                                return assignments;
+                                //cout << "Se supero el numero maximo de dias en el asap para el paciente " << pat << endl;
+                                //cout << day << endl;
+                                //show_info_patient(pat, patData);
+                                //show_scheduling();
+                                exit(0);
+                        }
+                        else if(assignments.size() != (unsigned int)patData[pat - 1].nSessions){
+                                assignments.clear();
+                                return assignments;
+                                day = next_day(count_days + patData[pat - 1].initialTreatmentDate, pat);
+                                max_interruptions = true;
+                        }
+                        
+                }while(max_interruptions);
+                
+                //showSchedulPatience(assignments);
+                //cout << endl;
+                
+                //Asignar los tiempos calculados a las maquinas
+                //Agregar el primer tiempo de ser necesario
+                //for(unsigned int i = 0; i < assignments.size(); i++){
+                //        assign_time_machine(assignments[i].second, assignments[i].first, patData[pat -1].duration_session);
+                //}
+
+                return assignments;
+        }
 	
 	void set_params(float nshifts, int ndays, int l_mach, int h_mach, int first_day){
 		this->emergency = 0;
@@ -200,6 +317,7 @@ class Individual{
 	  void assign_time_machine(int machine_i, int day, float time){
 		for(std::list< std::pair<int, float> >::iterator it = available_time[machine_i].begin(); it != available_time[machine_i].end(); it++){
 			if((*it).first == day){
+				(*it).second -= time;
 				//cout << "Desconto: " << time << endl;
 				if((*it).second == 0.0){
 					available_time[machine_i].erase(it);
@@ -213,7 +331,7 @@ class Individual{
 		}
 	}
 	
-	void show_vector(){
+	void show_vector(int e, int p, int r, vector<PatientsData> patData){
 		cout << (int)schedul.size() << endl;
 	  
 		for(int i = 0; i < (int)schedul.size(); i++){
@@ -223,6 +341,20 @@ class Individual{
 				cout << schedul[i][j].second << " " ;
 			}
 			cout << endl;
+		}
+		
+		cout << e << " " << p << " " << r << endl;
+		
+		for(int i = 0; i < e + p + r; i++){
+		      cout << patData[i].id << " ";
+		      cout << patData[i].category << " ";
+		      cout << patData[i].initialTreatmentDate << " ";
+		      cout << patData[i].finalTreatmentDate << " ";
+		      cout << patData[i].days_delay << " ";
+		      cout << patData[i].nSessions << " ";
+		      cout << patData[i].interruptions << " ";
+		      cout << patData[i].machine << " ";
+		      cout << patData[i].duration_session << endl;
 		}
 	}
 	

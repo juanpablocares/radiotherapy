@@ -12,6 +12,10 @@ float random_0_1(){
 	return ((double)rand() / ((double) RAND_MAX));
 }
 
+bool order_factor(pair<float, PatientsData> a, pair<float, PatientsData> b){
+      return (a.first > b.first);
+}
+
 vector <PatientsData> order_patients(vector <PatientsData> list, int day){
       
       vector<pair<float, PatientsData> > factor;
@@ -33,6 +37,14 @@ vector <PatientsData> order_patients(vector <PatientsData> list, int day){
 	      
 	      aux_pair.second = list[i];
 	      factor.push_back(aux_pair);
+      }
+      
+      std::sort(factor.begin(), factor.end(), order_factor);
+      
+      list.clear();
+      for(int i = 0; i < (int)factor.size(); i++){
+	      PatientsData temporal_pat = factor[i].second;
+	      list.push_back(temporal_pat);
       }
       
       return list;
@@ -126,11 +138,14 @@ int main(int argc, char *argv[])
       
       int id = 0;
       int sum = 0;
+      int total_pat_global = 0;
+      int count = 0;
       for(int d = 1; d <= nDays || !patients_waiting.empty(); d++){
 	      int total_pat;
 	      //cout << d << endl;
 	      if(d <= nDays){
 		    cin >> total_pat;
+		    total_pat_global += total_pat;
 		   // cout << total_pat << endl;
 	      }
 
@@ -146,16 +161,19 @@ int main(int argc, char *argv[])
 			      
 			      if(s.size() == 0){
 				      //global.show_vector();
-				      cout << "PROBLEMA " << patients_waiting[i].id << endl;
-				      exit(0);
+				      //cout << "PROBLEMA " << patients_waiting[i].id << endl;
+				      //exit(0);
 				      //cout << global.time_machine_i(0, d) << endl;
 				      //Update lista
+				      count++;
 				      std::sort(patients_waiting.begin(), patients_waiting.end(), sort_waiting);
 				      patients_waiting = order_patients(patients_waiting, d);
 				      quan_pat[d]++;
 				      //exit(0);
 			      }
 			      else{
+				      if(d > patients_waiting[i].finalTreatmentDate)
+					      sum += d - patients_waiting[i].finalTreatmentDate;
 				      //Se puede insertar en la planificacion
 				      global.insert_schedul(patients_waiting[i].id, s, patientsData);
 				      patients_waiting = erase_patient(patients_waiting[i].id, patients_waiting);
@@ -187,10 +205,23 @@ int main(int argc, char *argv[])
 	      }
 
       }
-      //cout << endl << "Solucion" << endl;
-      //cout << "Urgentes: " << global.getEmergency() << endl;
-      //cout << "Paliativos: " << global.getPalliative() << endl;
-      //cout << "Radicales: " << global.getRadical() << endl;
-      //global.show_vector();
+      cout << endl << "Solucion" << endl;
+      cout << "N: " << count << endl;
+      cout << "Delay: " << sum << endl;
+      cout << "Urgentes: " << global.getEmergency() << endl;
+      cout << "Paliativos: " << global.getPalliative() << endl;
+      cout << "Radicales: " << global.getRadical() << endl;
+      global.show_vector();
+      cout << global.getEmergency() << " " << global.getPalliative() << " " << global.getRadical() << endl;
+      for(int i = 0; i < total_pat_global; i++){
+		      cout << patientsData[i].category;
+		      cout << patientsData[i].initialTreatmentDate;
+		      cout << patientsData[i].finalTreatmentDate;
+		      cout << patientsData[i].days_delay;
+		      cout << patientsData[i].nSessions;
+		      cout << patientsData[i].interruptions;
+		      cout << patientsData[i].machine;
+		      cout << patientsData[i].duration_session;
+      }
       return 0;
 }

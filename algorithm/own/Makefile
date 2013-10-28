@@ -9,7 +9,7 @@ p_insert_eliminate=0.1
 p_eme=0.5
 p_pal=0.5
 p_rad=0.5
-instance=test/test
+instance=../test/test
 
 all: main
 

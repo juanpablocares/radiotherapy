@@ -124,6 +124,7 @@ int main(int argc, char *argv[])
       
       //Lectura de informacion de los pacientes
       vector <PatientsData> patientsData;
+      vector <PatientsData> lista_output;
       //Pacientes que estan en lista de espera por insuficiencia de maquinas en el dia especificado
       vector <PatientsData> patients_waiting;
       //REVISAR MEMORIA ACA, YA QUE PIDO MAS DE LO NECESARIO
@@ -138,11 +139,14 @@ int main(int argc, char *argv[])
       
       int id = 0;
       int sum = 0;
+      int total_pat_global = 0;
+      int count = 0;
       for(int d = 1; d <= nDays || !patients_waiting.empty(); d++){
 	      int total_pat;
 	      //cout << d << endl;
 	      if(d <= nDays){
 		    cin >> total_pat;
+		    total_pat_global += total_pat;
 		   // cout << total_pat << endl;
 	      }
 
@@ -154,23 +158,28 @@ int main(int argc, char *argv[])
 			      }
 
 			      std::vector < std::pair< int, int > > s;
-			      s = global.try_insert(patients_waiting[i].id, d, patientsData);
+			      s = global.try_insert(patients_waiting[i].id, patients_waiting[i].machine, d, patientsData);
 			      
 			      if(s.size() == 0){
 				      //global.show_vector();
-				      cout << "PROBLEMA " << patients_waiting[i].id << endl;
-				      exit(0);
+				      //cout << "PROBLEMA " << patients_waiting[i].id << endl;
+				      //exit(0);
 				      //cout << global.time_machine_i(0, d) << endl;
 				      //Update lista
+				      count++;
 				      std::sort(patients_waiting.begin(), patients_waiting.end(), sort_waiting);
 				      patients_waiting = order_patients(patients_waiting, d);
 				      quan_pat[d]++;
 				      //exit(0);
 			      }
 			      else{
+				      if(d > patients_waiting[i].finalTreatmentDate){
+					      sum += d - patients_waiting[i].finalTreatmentDate;
+				      }
 				      //Se puede insertar en la planificacion
 				      global.insert_schedul(patients_waiting[i].id, s, patientsData);
 				      patients_waiting = erase_patient(patients_waiting[i].id, patients_waiting);
+				      lista_output.push_back(patients_waiting[i]);
 			      }
 		      }
 	      
@@ -200,9 +209,12 @@ int main(int argc, char *argv[])
 
       }
       cout << endl << "Solucion" << endl;
+      cout << "N: " << count << endl;
+      cout << "Delay: " << sum << endl;
       cout << "Urgentes: " << global.getEmergency() << endl;
       cout << "Paliativos: " << global.getPalliative() << endl;
       cout << "Radicales: " << global.getRadical() << endl;
-      global.show_vector();
+      global.show_vector(global.getEmergency(), global.getPalliative(), global.getRadical(), patientsData);
+      
       return 0;
 }
