@@ -111,7 +111,8 @@ int main(int argc, char *argv[])
 {
 	/*Datos por entrada*/
 	int groupEme, groupPal, groupRad, total_pat, nDays, nMach_high, nMach_low, seed;
-	int delta_days = 7;
+	int delta_days = 3;
+	int PAT_DAY = 10;
 	float nShifts, nEme, nPal, nRad;
 	
 	/*Inicializar semilla*/
@@ -119,6 +120,9 @@ int main(int argc, char *argv[])
 	srand(seed);
 	cin >> nDays;
 	cout << nDays << endl;
+	
+	cin >> delta_days;
+	cin >> PAT_DAY;
 	/*******************Leer entrada*******************/
 	
 	//Numero total pacientes
@@ -217,7 +221,7 @@ int main(int argc, char *argv[])
 	for(int j = 1; j <= nDays; j++){
 	  
 		list_patients.clear();
-		total_pat = random_generator(0, 5);
+		total_pat = random_generator(0, PAT_DAY);
 		for(int i = 1; i <= total_pat; i++){
 			
 			PatientsData aux;
