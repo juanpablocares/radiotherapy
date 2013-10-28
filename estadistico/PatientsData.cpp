@@ -1,6 +1,7 @@
 class PatientsData{
 
 	public:
+		int id;
 		int initialTreatmentDate;
 		int finalTreatmentDate;
 		int days_delay;

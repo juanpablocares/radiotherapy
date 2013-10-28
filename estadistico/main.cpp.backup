@@ -182,7 +182,7 @@ int calculate_delay(std::vector<std::vector < std::pair< int, int > > > schedul,
 	int delay_rad = 0;
 	int delay = 0;
 	
-	for(int i = 0; i < (int)schedul.size(); i++){	  
+	for(int i = 0; i < (int)schedul.size(); i++){
 		delay += patientsData[i].days_delay;
 		if(i < nEme && schedul[i][0].first - patientsData[i].finalTreatmentDate > 0)
 		      delay_eme += schedul[i][0].first - patientsData[i].finalTreatmentDate;
