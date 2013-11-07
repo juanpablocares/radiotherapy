@@ -471,7 +471,7 @@ class Individual{
 		}
 	}
 	
-	void show_vector(){
+	void show_vector(int e, int p, int r, vector<PatientsData> patData){
 		cout << (int)schedul.size() << endl;
 	  
 		for(int i = 0; i < (int)schedul.size(); i++){
@@ -481,6 +481,20 @@ class Individual{
 				cout << schedul[i][j].second << " " ;
 			}
 			cout << endl;
+		}
+		
+		cout << e << " " << p << " " << r << endl;
+		
+		for(int i = 0; i < e + p + r; i++){
+		      cout << patData[i].id << " ";
+		      cout << patData[i].category << " ";
+		      cout << patData[i].initialTreatmentDate << " ";
+		      cout << patData[i].finalTreatmentDate << " ";
+		      cout << patData[i].days_delay << " ";
+		      cout << patData[i].nSessions << " ";
+		      cout << patData[i].interruptions << " ";
+		      cout << patData[i].machine << " ";
+		      cout << patData[i].duration_session << endl;
 		}
 	}
 	

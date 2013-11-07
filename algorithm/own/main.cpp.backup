@@ -124,6 +124,7 @@ int main(int argc, char *argv[])
       
       //Lectura de informacion de los pacientes
       vector <PatientsData> patientsData;
+      vector <PatientsData> lista_output;
       //Pacientes que estan en lista de espera por insuficiencia de maquinas en el dia especificado
       vector <PatientsData> patients_waiting;
       //REVISAR MEMORIA ACA, YA QUE PIDO MAS DE LO NECESARIO
@@ -157,7 +158,7 @@ int main(int argc, char *argv[])
 			      }
 
 			      std::vector < std::pair< int, int > > s;
-			      s = global.try_insert(patients_waiting[i].id, d, patientsData);
+			      s = global.try_insert(patients_waiting[i].id, patients_waiting[i].machine, d, patientsData);
 			      
 			      if(s.size() == 0){
 				      //global.show_vector();
@@ -172,11 +173,13 @@ int main(int argc, char *argv[])
 				      //exit(0);
 			      }
 			      else{
-				      if(d > patients_waiting[i].finalTreatmentDate)
+				      if(d > patients_waiting[i].finalTreatmentDate){
 					      sum += d - patients_waiting[i].finalTreatmentDate;
+				      }
 				      //Se puede insertar en la planificacion
 				      global.insert_schedul(patients_waiting[i].id, s, patientsData);
 				      patients_waiting = erase_patient(patients_waiting[i].id, patients_waiting);
+				      lista_output.push_back(patients_waiting[i]);
 			      }
 		      }
 	      
@@ -211,17 +214,7 @@ int main(int argc, char *argv[])
       cout << "Urgentes: " << global.getEmergency() << endl;
       cout << "Paliativos: " << global.getPalliative() << endl;
       cout << "Radicales: " << global.getRadical() << endl;
-      global.show_vector();
-      cout << global.getEmergency() << " " << global.getPalliative() << " " << global.getRadical() << endl;
-      for(int i = 0; i < total_pat_global; i++){
-		      cout << patientsData[i].category;
-		      cout << patientsData[i].initialTreatmentDate;
-		      cout << patientsData[i].finalTreatmentDate;
-		      cout << patientsData[i].days_delay;
-		      cout << patientsData[i].nSessions;
-		      cout << patientsData[i].interruptions;
-		      cout << patientsData[i].machine;
-		      cout << patientsData[i].duration_session;
-      }
+      global.show_vector(global.getEmergency(), global.getPalliative(), global.getRadical(), patientsData);
+      
       return 0;
 }

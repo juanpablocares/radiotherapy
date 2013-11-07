@@ -186,7 +186,7 @@ class Individual{
                         int mach = 0;
                         int max_mach = low_mach;
                         
-                        if(patData[pat - 1].machine == 2){
+                        if(machine == 2){
                                 mach = low_mach;
                                 max_mach = low_mach + high_mach;
                         }

@@ -78,12 +78,7 @@ int main(int argc, char *argv[])
 { 
       //Parametros algoritmo
       int seed = atoi(argv[1]);
-      int iterations = atoi(argv[2]);
-      int restart = atoi(argv[3]);
-      float p_insert_eliminate = atof(argv[4]);
-      float p_eme = atof(argv[5]);
-      float p_pal = atof(argv[6]);
-      float p_rad = atof(argv[7]);
+      
       int nDays;
       //Fin parametros algoritmo
       
@@ -122,10 +117,6 @@ int main(int argc, char *argv[])
       //Variable que almacenara la mejor solucion global del algoritmo
       Individual global;
       
-      //Variable que almacenara el tiempo de ejecucion del greedy y el algoritmo
-      unsigned int t_greedy = 0;
-      unsigned int t_hc = 0;
-      
       //Lectura de informacion de los pacientes
       vector <PatientsData> patientsData;
       //Pacientes que estan en lista de espera por insuficiencia de maquinas en el dia especificado
@@ -141,7 +132,7 @@ int main(int argc, char *argv[])
       global.set_time_machines(time_machines, 600, low_machine + high_machine);
       
       int id = 0;
-      int sum = 0;
+      //int sum = 0;
       for(int d = 1; d <= nDays || !patients_waiting.empty(); d++){
 	      int total_pat;
 	      //cout << d << endl;
@@ -203,10 +194,10 @@ int main(int argc, char *argv[])
 	      }
 
       }
-      cout << endl << "Solucion" << endl;
-      cout << "Urgentes: " << global.getEmergency() << endl;
-      cout << "Paliativos: " << global.getPalliative() << endl;
-      cout << "Radicales: " << global.getRadical() << endl;
-      global.show_vector();
+      //cout << endl << "Solucion" << endl;
+      //cout << "Urgentes: " << global.getEmergency() << endl;
+      //cout << "Paliativos: " << global.getPalliative() << endl;
+      //cout << "Radicales: " << global.getRadical() << endl;
+      global.show_vector(global.getEmergency(), global.getPalliative(), global.getRadical(), patientsData);
       return 0;
 }

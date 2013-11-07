@@ -74,12 +74,7 @@ int main(int argc, char *argv[])
 { 
       //Parametros algoritmo
       int seed = atoi(argv[1]);
-      int iterations = atoi(argv[2]);
-      int restart = atoi(argv[3]);
-      float p_insert_eliminate = atof(argv[4]);
-      float p_eme = atof(argv[5]);
-      float p_pal = atof(argv[6]);
-      float p_rad = atof(argv[7]);
+      
       int nDays;
       //Fin parametros algoritmo
       
@@ -119,8 +114,8 @@ int main(int argc, char *argv[])
       Individual global;
       
       //Variable que almacenara el tiempo de ejecucion del greedy y el algoritmo
-      unsigned int t_greedy = 0;
-      unsigned int t_hc = 0;
+//       unsigned int t_greedy = 0;
+//       unsigned int t_hc = 0;
       
       //Lectura de informacion de los pacientes
       vector <PatientsData> patientsData;
@@ -138,7 +133,7 @@ int main(int argc, char *argv[])
       global.set_time_machines(time_machines, 600, low_machine + high_machine);
       
       int id = 0;
-      int sum = 0;
+      //int sum = 0;
       int total_pat_global = 0;
       int count = 0;
       for(int d = 1; d <= nDays || !patients_waiting.empty(); d++){
@@ -158,7 +153,16 @@ int main(int argc, char *argv[])
 			      }
 
 			      std::vector < std::pair< int, int > > s;
-			      s = global.try_insert(patients_waiting[i].id, patients_waiting[i].machine, d, patientsData);
+			      int local_machine = patients_waiting[i].machine;
+			      if(patients_waiting[i].machine == 3){
+				    float r = random_0_1();
+				    if(r < 0.5)
+					  local_machine = 1;
+				    else
+					  local_machine = 2;
+			      }
+				    
+			      s = global.try_insert(patients_waiting[i].id, local_machine, d, patientsData);
 			      
 			      if(s.size() == 0){
 				      //global.show_vector();
@@ -173,9 +177,9 @@ int main(int argc, char *argv[])
 				      //exit(0);
 			      }
 			      else{
-				      if(d > patients_waiting[i].finalTreatmentDate){
-					      sum += d - patients_waiting[i].finalTreatmentDate;
-				      }
+// 				      if(d > patients_waiting[i].finalTreatmentDate){
+// 					      sum += d - patients_waiting[i].finalTreatmentDate;
+// 				      }
 				      //Se puede insertar en la planificacion
 				      global.insert_schedul(patients_waiting[i].id, s, patientsData);
 				      patients_waiting = erase_patient(patients_waiting[i].id, patients_waiting);
@@ -208,12 +212,12 @@ int main(int argc, char *argv[])
 	      }
 
       }
-      cout << endl << "Solucion" << endl;
-      cout << "N: " << count << endl;
-      cout << "Delay: " << sum << endl;
-      cout << "Urgentes: " << global.getEmergency() << endl;
-      cout << "Paliativos: " << global.getPalliative() << endl;
-      cout << "Radicales: " << global.getRadical() << endl;
+      //cout << endl << "Solucion" << endl;
+      //cout << "N: " << count << endl;
+      //cout << "Delay: " << sum << endl;
+      //cout << "Urgentes: " << global.getEmergency() << endl;
+      //cout << "Paliativos: " << global.getPalliative() << endl;
+      //cout << "Radicales: " << global.getRadical() << endl;
       global.show_vector(global.getEmergency(), global.getPalliative(), global.getRadical(), patientsData);
       
       return 0;

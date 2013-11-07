@@ -111,7 +111,7 @@ int main(int argc, char *argv[])
 {
 	/*Datos por entrada*/
 	int groupEme, groupPal, groupRad, total_pat, nDays, nMach_high, nMach_low, seed;
-	int delta_days = 3;
+	int delta_days = 2;
 	int PAT_DAY = 10;
 	float nShifts, nEme, nPal, nRad;
 	

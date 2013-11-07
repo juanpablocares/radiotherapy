@@ -151,7 +151,7 @@ class Individual{
 	
 	//Funcion asap de petrovic
 	//Se basa en la planificacion realizada intentando planificar un nuevo paciente con su respectiva informacion
-	std::vector < std::pair< int, int > > asap_algorithm(int pat, vector<PatientsData> patData){
+	std::vector < std::pair< int, int > > asap_algorithm(int pat, int machine, vector<PatientsData> patData){
 		int count_days = 0;
 		int day = patData[pat - 1].initialTreatmentDate;
 		int category = patData[pat - 1].category;
@@ -185,7 +185,7 @@ class Individual{
 			int mach = 0;
 			int max_mach = low_mach;
 			
-			if(patData[pat - 1].machine == 2){
+			if(machine == 2){
 				mach = low_mach;
 				max_mach = low_mach + high_mach;
 			}
@@ -326,7 +326,7 @@ class Individual{
 		}
 	}
 	
-	void show_vector(){
+	void show_vector(int e, int p, int r, vector<PatientsData> patData){
 		cout << (int)schedul.size() << endl;
 	  
 		for(int i = 0; i < (int)schedul.size(); i++){
@@ -336,6 +336,20 @@ class Individual{
 				cout << schedul[i][j].second << " " ;
 			}
 			cout << endl;
+		}
+		
+		cout << e << " " << p << " " << r << endl;
+		
+		for(int i = 0; i < e + p + r; i++){
+		      cout << patData[i].id << " ";
+		      cout << patData[i].category << " ";
+		      cout << patData[i].initialTreatmentDate << " ";
+		      cout << patData[i].finalTreatmentDate << " ";
+		      cout << patData[i].days_delay << " ";
+		      cout << patData[i].nSessions << " ";
+		      cout << patData[i].interruptions << " ";
+		      cout << patData[i].machine << " ";
+		      cout << patData[i].duration_session << endl;
 		}
 	}
 	

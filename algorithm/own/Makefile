@@ -3,12 +3,6 @@ CC=g++
 CFLAGS=-c -Wall -g -ggdb
 
 seed=1
-iterations=100
-restarts=1
-p_insert_eliminate=0.1
-p_eme=0.5
-p_pal=0.5
-p_rad=0.5
 instance=../test/test
 
 all: main
@@ -29,4 +23,4 @@ clean:
 	rm -rf *o main core
 
 exe:
-	./main $(seed) $(iterations) $(restarts) $(p_insert_eliminate) $(p_eme) $(p_pal) $(p_rad) < $(instance)
+	./main $(seed) < $(instance)
