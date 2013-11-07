@@ -15,6 +15,6 @@ out=$OutDir"/"$i
 find -name "*.rad" -print0 | \
     (while read -d $'\0' i;
     do
-out=$OutDir"/"$i;
-    ./../algorithm/own/main 1 < ${i:2} > $out;
+out=$OutDir"/"${i/rad/out};
+    ./../algorithm/own/main 1 < ${i:2} > ${out};
     done)
