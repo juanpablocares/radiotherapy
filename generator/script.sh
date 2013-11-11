@@ -18,7 +18,7 @@ ls test | \
     do
 for seed in $(seq 1 $S)
 do
-out=$OutDir"/"${i}"/"${i}"_"${seed};
+out=$OutDir"/"${i}"/"${i}"_"${seed}".rad";
 ./main $seed < "test/"$i > $out
 done
     done)

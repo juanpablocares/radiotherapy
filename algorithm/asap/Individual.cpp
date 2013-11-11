@@ -314,6 +314,7 @@ class Individual{
 		for(std::list< std::pair<int, float> >::iterator it = available_time[machine_i].begin(); it != available_time[machine_i].end(); it++){
 			if((*it).first == day){
 				//cout << "Desconto: " << time << endl;
+				(*it).second -= time;
 				if((*it).second == 0.0){
 					available_time[machine_i].erase(it);
 				}

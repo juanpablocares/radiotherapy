@@ -458,6 +458,7 @@ class Individual{
 	  void assign_time_machine(int machine_i, int day, float time){
 		for(std::list< std::pair<int, float> >::iterator it = available_time[machine_i].begin(); it != available_time[machine_i].end(); it++){
 			if((*it).first == day){
+				(*it).second -= time;
 				//cout << "Desconto: " << time << endl;
 				if((*it).second == 0.0){
 					available_time[machine_i].erase(it);
