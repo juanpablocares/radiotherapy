@@ -18,31 +18,42 @@ float pr_delta(std::vector<std::vector < std::pair< int, int > > > schedul, vect
 	prom_eme = 0.0;
 	prom_pal = 0.0;
 	prom_rad = 0.0;
+	int count_eme = 0;
+	int count_pal = 0;
+	int count_rad = 0;
 	for(int i = 0; i < (int)schedul.size(); i++){
 	  
 		if(schedul[i][0].first > patData[i].finalTreatmentDate){
 			float aux = ((float)(schedul[i][0].first - patData[i].finalTreatmentDate));
 			
-			if(i < eme)
+			if(i < eme){
 				prom_eme += aux;
+				count_eme++;
+			}
 			else if(i < eme + pal){
 				prom_pal += aux;
-				//cout << "ctm: " << aux << endl;
+				count_pal++;
 			}
-			else if(i < eme + pal + rad)
+			else if(i < eme + pal + rad){
 				prom_rad += aux;
+				count_rad++;
+			}
 			
 			prom_delta += aux;
 		}
 	}
 	
-	cout << "Prom urg: " << prom_eme / ((float)eme) << endl;
-	cout << "Prom pal: " << prom_pal / ((float)pal) << endl;
-	cout << "Prom rad: " << prom_rad / ((float)rad) << endl;
+	cout << "Porcentaje atrasado urgente: " << (float)100*(float)count_eme / (float)eme << endl;
+	cout << "Porcentaje atrasado paliativo: " << (float)100*(float)count_pal / (float)pal << endl;
+	cout << "Porcentaje atrasado radical: " << (float)100*(float)count_rad / (float)rad << endl << endl;
+	
+	cout << "Prom urg: " << prom_eme / ((float)count_eme) << endl;
+	cout << "Prom pal: " << prom_pal / ((float)count_pal) << endl;
+	cout << "Prom rad: " << prom_rad / ((float)count_rad) << endl;
 	cout << "Prom: " << (prom_eme + prom_pal + prom_rad) / ((float)schedul.size()) << endl << endl;
-	prom_eme = prom_eme / ((float)eme);
-	prom_pal = prom_pal / ((float)pal);
-	prom_rad = prom_rad / ((float)rad);
+	prom_eme = prom_eme / ((float)count_eme);
+	prom_pal = prom_pal / ((float)count_pal);
+	prom_rad = prom_rad / ((float)count_rad);
 	return prom_delta / ((float)schedul.size());
   
 }
@@ -53,6 +64,9 @@ float desv_delta(std::vector<std::vector < std::pair< int, int > > > schedul, ve
 	float desv_eme = 0.0;
 	float desv_pal = 0.0;
 	float desv_rad = 0.0;
+	int count_eme = 0;
+	int count_pal = 0;
+	int count_rad = 0;
 	for(int i = 0; i < (int)schedul.size(); i++){
 	  
 		if(patData[i].id != i + 1){
@@ -68,23 +82,26 @@ float desv_delta(std::vector<std::vector < std::pair< int, int > > > schedul, ve
 				float aux_eme = ((float)(schedul[i][0].first - patData[i].finalTreatmentDate));
 				aux_eme = aux_eme * aux_eme;
 				desv_eme += aux_eme;
+				count_eme++;
 			}
 			else if(i < eme + pal){
 				float aux_pal = ((float)(schedul[i][0].first - patData[i].finalTreatmentDate));
 				aux_pal = aux_pal * aux_pal;
 				desv_pal += aux_pal;
+				count_pal++;
 			}
 			else if(i < eme + pal + rad){
 				float aux_rad = ((float)(schedul[i][0].first - patData[i].finalTreatmentDate));
 				aux_rad = aux_rad * aux_rad;
 				desv_rad += aux_rad;
+				count_rad++;
 			}
 		}
 	}
 
-	cout << "Desv urg: " << sqrt(desv_eme / ((float)eme) - prom_eme * prom_eme) << endl;
-	cout << "Desv pal: " << sqrt(desv_pal / ((float)pal) - prom_pal * prom_pal) << endl;
-	cout << "Desv rad: " << sqrt(desv_rad / ((float)rad) - prom_rad * prom_rad) << endl;
+	cout << "Desv urg: " << sqrt((desv_eme / (float)count_eme) - prom_eme*prom_eme) << endl;
+	cout << "Desv pal: " << sqrt((desv_pal / (float)count_pal) - prom_pal*prom_pal) << endl;
+	cout << "Desv rad: " << sqrt((desv_rad / (float)count_rad) - prom_rad*prom_rad) << endl;
 	
 	
 	desv = desv / (float)schedul.size();
@@ -182,7 +199,7 @@ int calculate_delay(std::vector<std::vector < std::pair< int, int > > > schedul,
 	int delay_rad = 0;
 	int delay = 0;
 	
-	for(int i = 0; i < (int)schedul.size(); i++){
+	for(int i = 0; i < (int)schedul.size(); i++){	  
 		delay += patientsData[i].days_delay;
 		if(i < nEme && schedul[i][0].first - patientsData[i].finalTreatmentDate > 0)
 		      delay_eme += schedul[i][0].first - patientsData[i].finalTreatmentDate;
@@ -294,8 +311,8 @@ int main(int argc, char *argv[])
 	//Fin leer entrada
 	//show_vector(schedul);
 	
-	cout << "Delay: " << calculate_delay(schedul, patientsData, nEme, nPal, nRad) << endl;
-	cout << "Entropia: " << calculate_entropy(schedul, patientsData, nEme, nPal, nRad) << endl;
+	cout << "Delay: " << calculate_delay(schedul, patientsData, nEme, nPal, nRad) << endl << endl;
+	cout << "Entropia: " << calculate_entropy(schedul, patientsData, nEme, nPal, nRad) << endl << endl;
 	//cout << "Promedio: " << pr_delta(schedul, patientsData, nEme, nPal, nRad) << endl;
 	cout << "Desviacion: " << desv_delta(schedul, patientsData, nEme, nPal, nRad) << endl;
 	
