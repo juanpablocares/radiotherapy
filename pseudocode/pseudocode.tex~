@@ -1,0 +1,76 @@
+dias a planificar
+delay para comenzar sesiones
+numero de pacientes maximo por dia
+proporcion de pacientes urgentes
+  grupos de posibles sesiones
+    probabilidad sesion - numero de sesiones
+proporcion de pacientes paliativos
+  grupos de posibles sesiones
+    probabilidad sesion - numero de sesiones
+proporcion de pacientes radicales
+  grupos de posibles sesiones
+    probabilidad sesion - numero de sesiones
+probabilidad interrupcion
+tiempo disponible para las sesiones
+numero de maquinas de alta energia
+numero de maquinas de baja energia
+probabilidad asignar en maquina de alta energia urgente, palitivo, radicales
+
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+
+\begin{algorithm}
+\caption{Generator}
+\begin{algorithmic}[1]
+\Procedure{Generator}{}
+\Require $days$, $gap$, $total\_pat$, $prob\_int$, $time$, $groups\_eme$, $groups\_pal$, $groups\_rad$, $ses\_eme$, $ses\_pal$, $ses\_rad$, $prob\_ses\_eme$, $prob\_ses\_pal$, $prob\_ses\_rad$, $n\_mach$, $machines\_eme$, $machines\_pal$, $machines\_rad$
+\For{$d:=1$}{ $days$}
+
+\State $list\_patients \gets NULL$
+\State $pat\_day \gets random(0, total\_pat)$
+
+      \For{$p:=1$}{ $pat\_day$}
+	    \State $new\_patient \gets NULL$
+	    \State $type \gets 0$
+	    \State $begin \gets d + random(1, gap)$
+	    \State $interruption \gets random(0, prob\_int)$
+	    
+	    \State $r \gets random(0,1)$
+	    \If{$r \leq p\_eme$}
+		\State $sessions \gets number\_sessions(groups\_eme, ses\_eme)$
+		\State $treatments \gets sessions\_pat(r, groups\_eme, prob_ses_eme)$
+		\State $begin \gets begin + late\_eme$
+	    \ElsIf{$p \leq emergency + paliative$}
+		\State $sessions \gets number\_sessions(groups\_pal, ses\_pal)$
+		\State $treatments \gets sessions\_pat(r, groups\_pal, prob_ses_pal)$
+		\State $begin \gets begin + late\_pal$
+	    \Else
+		\State $sessions \gets number\_sessions(groups\_rad, ses\_rad)$
+		\State $treatments \gets sessions\_pat(r, groups\_rad, prob_ses_rad)$
+		\State $begin \gets begin + late\_rad$
+	    \EndIf
+
+	    \State $machine \gets 0$
+	    \State $r \gets random(0,1)$
+	    \If{$type = 1$}
+		  \State $machine \gets set\_machine(n\_mach, machines\_eme)$
+	    \ElsIf{$type = 2$}
+		  \State $machine \gets set\_machine(n\_mach, machines\_pal)$
+	     \ElsIf{$type = 3$}
+		  \State $machine \gets set\_machine(n\_mach, machines\_rad)$
+	     \EndIf
+	     \State
+	     \State $new\_patient \gets type, begin, interruption, sessions, treatments, machine$
+	     \State $list\_patients[d] \gets new\_patient$
+	     \State $order\_patients\_category(list\_patients)$
+      \EndFor
+      \State \Return $list\_patients$, $time$
+\EndFor
+
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\begin{table}{ll}
+\hline
+ 
+\end{table}
