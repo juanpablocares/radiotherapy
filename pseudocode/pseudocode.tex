@@ -1,20 +1,10 @@
-dias a planificar
-delay para comenzar sesiones
-numero de pacientes maximo por dia
-proporcion de pacientes urgentes
-  grupos de posibles sesiones
-    probabilidad sesion - numero de sesiones
-proporcion de pacientes paliativos
-  grupos de posibles sesiones
-    probabilidad sesion - numero de sesiones
-proporcion de pacientes radicales
-  grupos de posibles sesiones
-    probabilidad sesion - numero de sesiones
-probabilidad interrupcion
-tiempo disponible para las sesiones
-numero de maquinas de alta energia
-numero de maquinas de baja energia
-probabilidad asignar en maquina de alta energia urgente, palitivo, radicales
+% El generador comienza a iterar entre 1 y el número total de días $days$ requeridos a simular. Dentro del iterador inicializa la lista de pacientes ($list\_patients$) y asigna el numero de pacientes ($pat\_day$) que se van a agendar en el dia correspondiente. Este numero se genera aleatoriamente en un rango de 0 al número máximo ($total\_pat$) ingresado como parámetro.
+% Luego, comienza a iterar desde 1 hasta el número recién generado $pat\_day$. Se inicializa el nuevo paciente $new\_patient$, junto con el dia óptimo $begin$ a iniciar el tratamiento, este número varía entre 1 y el $gap$, a esto se le adiciona el día $d$ en que se encuentra el generador. Posteriormente se determina el tipo de paciente basado en las probabilidades ingresadas ($p\_eme, p\_pal, p\_rad$), donde, según corresponda, se asignará el número de tratamientos ($treatments$). Adicionalmente, se calcula el último día que podría comenzar a tratarse ($begin + [last\_eme, last\_pal, last\_rad]$). Después se calcula el número de interrupciones ($interruption$) que puede tener en el tratamiento, si no se desea tener interrupciones, basta con setear el parámetro $prob\_int = 0$. Dependiendo de la categoría determinada para el paciente, se asigna la máquina para este, por medio de las probabilidades ($machines\_eme, machines\_pal, machines\_rad$) ingresadas.
+% Finalmente se asigna los valores al nuevo paciente $new\_patient$ que es insertado en la lista $list\_patients$ en el día correspondiente, la que es ordenada por categoría.
+
+The generator starts to iterate between 1 and the total number of days $days$ required to simulate. Within the iterator initialized the patient list ($list\_patients $) and assigns the number of patients ($pat\_day$) to be schedule on the current day $d$. This number is randomly generated in a range from 0 to the maximum number ($total\_pat$) entered as parameter.\\
+Then begin iterating from 1 to the number newly generated $pat\_day$. It initializes the new patient $new\_patient$, together with the optimal day $begin$ to start the treatment, this number varies between $1$ and $gap$, to this is added the day $d$. Subsequently determines the type of patient based on the odds ($p\_eme, p\_pal ,p\_rad$. Where $p\_eme + p\_pal + p\_rad = 1$), where as applicable, will be assigned the number of treatments ($treatments$). Additionally, we calculate the last day were could begin the treatment ($begin + [last\_eme, last\_pal ,last\_rad]$) . After calculate the number of interruptions ($interruption$) it can have on treatment, if do not want to have interruptions, just set $prob\_int = 0$. Depending on the category determined for the patient, the machine is assigned, by means of odds ($machines\_eme, machines\_pal ,machines\_rad$) entered.\\
+Finally, assign the values to the new patient ($new\_patient$) which is inserted into the list $list\_patients[d]$ on the corresponding day, which is organized by category.
 
 \renewcommand{\algorithmicrequire}{\textbf{Input:}}
 
@@ -22,48 +12,47 @@ probabilidad asignar en maquina de alta energia urgente, palitivo, radicales
 \caption{Generator}
 \begin{algorithmic}[1]
 \Procedure{Generator}{}
-\Require $days$, $gap$, $total\_pat$, $prob\_int$, $time$, $groups\_eme$, $groups\_pal$, $groups\_rad$, $ses\_eme$, $ses\_pal$, $ses\_rad$, $prob\_ses\_eme$, $prob\_ses\_pal$, $prob\_ses\_rad$, $n\_mach$, $machines\_eme$, $machines\_pal$, $machines\_rad$
+\Require $days$, $total\_pat$, $prob\_int$, $time$, $p\_eme$, $p\_pal$, $p\_rad$ $groups\_eme$, $delay\_eme$, $delay\_pal$, $delay\_rad$ $groups\_pal$, $groups\_rad$, $ses\_eme$, $ses\_pal$, $ses\_rad$, $prob\_ses\_eme$, $prob\_ses\_pal$, $prob\_ses\_rad$, $n\_mach$, $machines\_eme$, $machines\_pal$, $machines\_rad$
 \For{$d:=1$}{ $days$}
 
 \State $list\_patients \gets NULL$
 \State $pat\_day \gets random(0, total\_pat)$
 
       \For{$p:=1$}{ $pat\_day$}
-	    \State $new\_patient \gets NULL$
-	    \State $type \gets 0$
 	    \State $begin \gets d + random(1, gap)$
-	    \State $interruption \gets random(0, prob\_int)$
 	    
 	    \State $r \gets random(0,1)$
 	    \If{$r \leq p\_eme$}
-		\State $sessions \gets number\_sessions(groups\_eme, ses\_eme)$
-		\State $treatments \gets sessions\_pat(r, groups\_eme, prob_ses_eme)$
-		\State $begin \gets begin + late\_eme$
-	    \ElsIf{$p \leq emergency + paliative$}
-		\State $sessions \gets number\_sessions(groups\_pal, ses\_pal)$
-		\State $treatments \gets sessions\_pat(r, groups\_pal, prob_ses_pal)$
-		\State $begin \gets begin + late\_pal$
+		\State $type \gets 1$
+		\State $treatments \gets sessions\_pat(r, groups\_eme, ses\_eme, prob\_ses\_eme)$
+		\State $end \gets begin + delay\_eme$
+	    \ElsIf{$p \leq p\_eme + p\_pal$}
+		\State $type \gets 2$
+		\State $treatments \gets sessions\_pat(r, groups\_pal, ses\_pal, prob\_ses\_pal)$
+		\State $end \gets begin + delay\_pal$
 	    \Else
-		\State $sessions \gets number\_sessions(groups\_rad, ses\_rad)$
-		\State $treatments \gets sessions\_pat(r, groups\_rad, prob_ses_rad)$
-		\State $begin \gets begin + late\_rad$
+		\State $type \gets 3$
+		\State $treatments \gets sessions\_pat(r, groups\_rad, ses\_rad, 	prob\_ses\_rad)$
+		\State $end \gets begin + delay\_rad$
 	    \EndIf
 
+	    \State $interruption \gets random(0, prob\_int * treatments)$
+	    
 	    \State $machine \gets 0$
 	    \State $r \gets random(0,1)$
 	    \If{$type = 1$}
-		  \State $machine \gets set\_machine(n\_mach, machines\_eme)$
+		  \State $machine \gets set\_machine(r, n\_mach, machines\_eme)$
 	    \ElsIf{$type = 2$}
-		  \State $machine \gets set\_machine(n\_mach, machines\_pal)$
+		  \State $machine \gets set\_machine(r, n\_mach, machines\_pal)$
 	     \ElsIf{$type = 3$}
-		  \State $machine \gets set\_machine(n\_mach, machines\_rad)$
+		  \State $machine \gets set\_machine(r, n\_mach, machines\_rad)$
 	     \EndIf
 	     \State
-	     \State $new\_patient \gets type, begin, interruption, sessions, treatments, machine$
+	     \State $new\_patient \gets type, begin, end, interruption, treatments, machine, time\_session, first\_time$
 	     \State $list\_patients[d] \gets new\_patient$
-	     \State $order\_patients\_category(list\_patients)$
+	     \State $order\_patients\_category(list\_patients[d])$
       \EndFor
-      \State \Return $list\_patients$, $time$
+      \State \Return $days$, $n\_mach$, $list\_patients$, $time$
 \EndFor
 
 \EndProcedure
@@ -72,7 +61,31 @@ probabilidad asignar en maquina de alta energia urgente, palitivo, radicales
 
 \begin{tabular}{ll}
 \hline
- \multicolumn{2}{l}{Parameters}\\
+ Parameter & Description\\
  \hline
- $days$ & Number of days\\
+ $days$ & Number of days to simulate\\
+ $total\_pat$ & Maximum number of patients that can be scheduled in a single day\\
+ $p\_eme$ & Percentage of emergency patients to simulate\\
+ $p\_pal$ & Percentage of palliative patients to simulate\\
+ $p\_rad$ & Percentage of radical patients to simulate\\
+ $prob\_int_i$ & Maximum percentage of all sessions assigned to the patient that may have interruptions in the treatment for patients categorized as $i$\\
+ $time$ & Machine time available per day\\
+ $time\_session$ & Duration of treatment in patients\\
+ $first\_time$ & Additional time to treatment in the first session\\
+ $delay\_eme$ & Extra delay at the beginning where may begin the treatment for emergency patients\\
+ $delay\_pal$ & Extra delay at the beginning where may begin the treatment for palliative patients\\
+ $delay\_rad$ & Extra delay at the beginning where may begin the treatment for radical patients\\
+ $groups\_eme$ & Number of types of treatments that the patient categorized emergency may have\\
+ $groups\_pal$ & Number of types of treatments that the patient categorized paliative may have\\
+ $groups\_rad$ & Number of types of treatments that the patient categorized radical may have\\
+ $ses\_eme$ & Vector that contain the number of treatments for the type of treatment needed for the patients categorized as emergency\\
+ $ses\_pal$ & Vector that contain the number of treatments for the type of treatment needed for the patients categorized as palliative\\
+ $ses\_rad$ & Vector that contain the number of treatments for the type of treatment needed for the patients categorized as radical\\
+ $prob\_ses\_eme$ & Vector that contain the probability of occurrence of the differents types of treatments for the patients categorized as emergency\\
+ $prob\_ses\_pal$ & Vector that contain the probability of occurrence of the differents types of treatments for the patients categorized as palliative\\
+ $prob\_ses\_rad$ & Vector that contain the probability of occurrence of the differents types of treatments for the patients categorized as radical\\
+ $n\_mach$ & Number of types of machines available\\
+ $machines\_eme$ & Vector that contain the probability of being assigned for a type of machine for the patients categorized as emergency\\
+ $machines\_pal$ & Vector that contain the probability of being assigned for a type of machine for the patients categorized as palliative\\
+ $machines\_rad$ & Vector that contain the probability of being assigned for a type of machine for the patients categorized as radical\\
 \end{tabular}
