@@ -1,0 +1,15 @@
+#include<vector>
+
+class PatientsData{
+
+	public:
+		int type;
+		int begin;
+		int end;
+		int sessions;
+		int interruptions;
+		int machine;
+		float first_time;
+		float time_ses;
+		vector<vector<int>> availability;
+};

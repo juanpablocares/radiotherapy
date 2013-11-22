@@ -3,9 +3,20 @@
 #include <cmath>
 #include <algorithm>
 #include <vector>
-#include "PatientsData.cpp"
 
-#define MAX_SESSIONS 5
+class PatientsData{
+
+	public:
+		int type;
+		int begin;
+		int end;
+		int sessions;
+		int interruptions;
+		int machine;
+		float first_time;
+		float time_ses;
+		std::vector< std::vector<int> > availability;
+};
 
 using namespace std;
 
@@ -69,11 +80,12 @@ int sessions_pat(int groups, vector<float> prob, vector<int> ses){
   
 	float r = (double) rand() / ((double) RAND_MAX);
 	float sum = 0.0;
-	
+
 	for(int i = 0; i < groups; i++){
 		sum += prob[i];
-		if(r < sum)
+		if(r < sum){
 			return ses[i];
+		}
 	}	
 	
 	return ses[groups - 1];
@@ -101,13 +113,15 @@ int main(int argc, char *argv[])
 	/*******************Leer entrada*******************/
 	int nDays;
 	cin >> nDays;
-	cout << nDays << endl;
+	cout << nDays << " ";
 	
 	int working_days;
 	cin >> working_days;
+	cout << working_days << " ";
 	
 	int shifts;
 	cin >> shifts;
+	cout << shifts << " ";
 	
 	int PAT_DAY;
 	cin >> PAT_DAY;
@@ -117,15 +131,18 @@ int main(int argc, char *argv[])
 	
 	float time;
 	cin >> time;
+	cout << time << " ";
 	
 	int n_mach;
 	cin >> n_mach;
+	cout << n_mach  << " ";
 	
 	vector<int>machines;
 	for(int i = 0; i < n_mach; i++){
 		int aux;
 		cin >> aux;
 		machines.push_back(aux);
+		cout << aux << " ";
 	}
 	
 	vector<float> p;	
@@ -187,27 +204,28 @@ int main(int argc, char *argv[])
 		}
 	}
 	
+	cout << endl;
 	/*******************Fin Leer entrada*******************/
-	
-	std::vector<PatientsData> list_patients;
+
 	for(int d = 1; d <= nDays; d++){
 	  
 		int total_pat;
-		list_patients.clear();
+		std::vector<PatientsData> list_patients;
 		total_pat = random_generator(0, PAT_DAY);
-		for(int i = 1; i <= total_pat; i++){
+		
+		for(int patient = 1; patient <= total_pat; patient++){
 			
 			PatientsData aux;
 			int type = 0;
 			int sessions = 0;
 			int beg, end, interruptions, machine;
 			double aleatorio = ((double)rand() / ((double) RAND_MAX));
+			
 			float r = 0.0;
-			for(int i = 1; i <= categories; i++){
+			for(int i = 0; i < categories; i++){
 				r += p[i];
 				if(aleatorio < r){
-				
-				      type = i;
+				      type = i+1;
 				      beg = d + 1;
 				      end = beg + delay[i];
 				      sessions = sessions_pat(groups[i], prob_ses[i], ses[i]);
@@ -226,29 +244,33 @@ int main(int argc, char *argv[])
 			aux.interruptions = interruptions;
 			aux.machine = machine;
 			aux.first_time = first_time;
-			aux.time_ses = time;
+			aux.time_ses = time_ses;
 			
 			/*Availability*/
 			vector <vector<int> > availability;
 			availability.resize(working_days);
 			for(int w = 0; w < working_days; w++){
+				int sum = 0;
 				do{
-				      availability[i].clear();
+				      availability[w].clear();
 				      for(int s = 1; s <= shifts; s++){
 					     float r = ((double)rand() / ((double) RAND_MAX));
-					     if(r < (float)s/shifts)
-					     availability[i].push_back(); 
+					     int shift_aux = 0;
+					     if(r < ((float)s)/((float)shifts))
+						    shift_aux = 1;
+					     availability[w].push_back(shift_aux);
 				      }
 				      
-				      int sum = 0;
+				      sum = 0;
 				      for(int s = 1; s <= shifts; s++)
-					      sum+=availability[w][s];
-				while(sum < 1);
+					      sum+=availability[w][s-1];
+				}while(sum < 1);
 			}
 			
+			aux.availability.clear();
+			aux.availability.assign(availability.begin(), availability.end());
 			list_patients.push_back(aux);
 		}
-		
 		//cout << "D" << j << " " << list_patients.size() << endl;
 		cout << list_patients.size() << endl;
 		
@@ -256,15 +278,20 @@ int main(int argc, char *argv[])
 			cout << list_patients[i].type << " " ;
 			cout << list_patients[i].begin << " " ;
 			cout << list_patients[i].end << " " ;
-			//cout << list_patients[i].delay << " " ;
 			cout << list_patients[i].sessions << " " ;
 			cout << list_patients[i].interruptions << " " ;
 			cout << list_patients[i].machine << " " ;
-			cout << list_patients[i].time_ses << endl;
+			cout << list_patients[i].first_time << " " ;
+			cout << list_patients[i].time_ses << " ";
+			for(int w = 0; w < working_days; w++){
+			      for(int s = 0; s < shifts; s++){
+				    cout << list_patients[i].availability[w][s] << " ";
+			      }
+			}
+			cout << endl;
 		}
 		cout << endl;
 	}
-	std::sort(list_patients.begin(), list_patients.end(), sort_list_patients);
 	
 	return 0;
 }
