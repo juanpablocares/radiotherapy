@@ -1,0 +1,24 @@
+\documentclass[letter, 10pt]{article}
+\usepackage[latin1]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{algorithmicx}
+\usepackage{algorithm}% http://ctan.org/pkg/algorithms
+\usepackage{algpseudocode}% http://ctan.org/pkg/algorithmicx
+\usepackage{multirow}
+\usepackage{multicolumn}
+
+\usepackage[dvips]{graphicx}
+\usepackage{url}
+\usepackage[top=3cm,bottom=3cm,left=3.5cm,right=3.5cm,footskip=1.5cm,headheight=1.5cm,headsep=.5cm,textheight=3cm]{geometry}
+\begin{document}
+\title{Fundamentos de Inteligencia Artificial \\ \begin{Large}Quiz 3\end{Large}}
+\author{Juan Pablo Cares Pino \\ \texttt{<juan.cares@usm.cl>}}
+\date{ 27 de Abril de 2013 \\
+\textbf{Tiempo: 30 Minutos}}
+
+\input{pseudocode.tex}
+
+\end{document}
+
