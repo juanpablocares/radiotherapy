@@ -160,8 +160,10 @@ class Individual{
 		low_mach = in.low_mach;
 		first_day_week = in.first_day_week;
 		schedul = in.schedul;
-		interruptions_pat = in.interruptions_pat;
-		available_time = in.available_time;
+	//Interrupciones de pacientes
+	vector <int> interruptions_pat;
+	//Tiempo disponible por maquina en cada dia <dia, tiempo>
+	std::vector < std::list< pair<int, float> > > available_time;
 	}
 	  
 	//Retorna un vector de largo cero en caso de no poder insertar al paciente

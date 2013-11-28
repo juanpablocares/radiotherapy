@@ -212,8 +212,7 @@ int main(int argc, char *argv[])
 	      }
 	      
 	      if(d % 7 == 0){
-		      Individual local;
-		      local.copy(global);
+		      
 	      }
 
       }
