@@ -196,6 +196,15 @@ class Individual{
                 
                 do{
                         if(category != 1){
+                          
+                                if(saturday(day)){
+                                        day += 2;
+                                }
+                                else if(sunday(day)){
+                                        day += 1;
+                                }
+                                
+                                
                                 if(sessions <= 5 && !fit_week(pat, day, patData)){
                                         day = next_monday(day);
                                 }
