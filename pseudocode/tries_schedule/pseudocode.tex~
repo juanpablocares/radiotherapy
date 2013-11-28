@@ -1,0 +1,52 @@
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\algdef{SE}[DOWHILE]{Do}{doWhile}{\algorithmicdo}[1]{\algorithmicwhile\ #1}
+\def\NoNumber#1{{\def\alglinenumber##1{}\State #1}\addtocounter{ALG@line}{-1}}
+
+\begin{algorithm}
+\caption{Generator}
+\begin{algorithmic}[1]
+\Procedure{Generator}{}
+\Require $id$, $machine$
+\For{$d:=1$ \textbf{to} $days$}
+
+\State $pat\_day \gets random(0, total\_pat)$
+
+      \For{$p:=1$ \textbf{to} $pat\_day$}
+	    
+	    \State $r \gets random(0,1)$
+	    \State $prob \gets 0$
+	    \For{$i:=1$ \textbf{to} $n\_cat$}
+		  \State $ prob \gets prob + p_{i}$
+		  \If{$r \leq prob$}
+		      \State $type \gets i$
+		      \State $release\_date \gets d + 1$
+		      \State $due\_date \gets release\_date + due\_i$
+		      \State $treatments \gets sessions\_pat(treatments_{i}, ses_{i}, prob\_ses_{i})$
+		      \State $interruption \gets random(0, prob\_int_i * treatments)$
+		      
+		      \Statex
+% 		      \State $r_m \gets random(0,1)$
+		      \State $machine \gets set\_machine(n\_mach, prob\_machines_{i})$
+		      
+		      \Statex
+		      \For{$w:=1$ \textbf{to} $working\_days$}
+			    \Do
+				  \For{$s:=1$ \textbf{to} $shifts$}
+					%x_{ws} corresponde a la disponibilidad horaria de los pacientes en cada turno por día%
+					\State $x_{ws} \gets random(0 $ or $1)$
+				  \EndFor
+			    \doWhile{$sum(x_{ws}) \geq 1$}
+		      \EndFor
+		  \EndIf
+	    \EndFor
+	    \Statex
+	     \State $new\_patient \gets type, release\_date, due\_date, treatments, interruption, machine, first\_time, time\_session$, $x_{ws}$
+	     \State $list\_patients_d \gets new\_patient$
+	     \State $order\_patients\_category(list\_patients_d)$
+      \EndFor
+      \State \Return $days$, $n\_mach$, $list\_patients$, $time$
+\EndFor
+
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
