@@ -154,32 +154,23 @@ int main(int argc, char *argv[])
 
 			      std::vector < std::pair< int, int > > s;
 			      int local_machine = patients_waiting[i].machine;
-			      if(patients_waiting[i].machine == 3){
+			      /*if(patients_waiting[i].machine == 3){
 				    float r = random_0_1();
 				    if(r < 0.5)
 					  local_machine = 1;
 				    else
 					  local_machine = 2;
-			      }
+			      }*/
 				    
 			      s = global.try_insert(patients_waiting[i].id, local_machine, d, patientsData);
 			      
 			      if(s.size() == 0){
-				      //global.show_vector();
-				      //cout << "PROBLEMA " << patients_waiting[i].id << endl;
-				      //exit(0);
-				      //cout << global.time_machine_i(0, d) << endl;
-				      //Update lista
 				      count++;
 				      std::sort(patients_waiting.begin(), patients_waiting.end(), sort_waiting);
 				      patients_waiting = order_patients(patients_waiting, d);
 				      quan_pat[d]++;
-				      //exit(0);
 			      }
 			      else{
-// 				      if(d > patients_waiting[i].finalTreatmentDate){
-// 					      sum += d - patients_waiting[i].finalTreatmentDate;
-// 				      }
 				      //Se puede insertar en la planificacion
 				      global.insert_schedul(patients_waiting[i].id, s, patientsData);
 				      patients_waiting = erase_patient(patients_waiting[i].id, patients_waiting);
