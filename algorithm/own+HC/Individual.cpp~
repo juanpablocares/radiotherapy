@@ -33,29 +33,24 @@ class Individual{
 	std::vector < std::list< pair<int, float> > > available_time;
 	
 	bool friday(int day){
-		if((day + first_day_week - 1) % 7 == 5)
+		if((day + first_day_week - 1) % 5 == 4)
 			return true;
 		return false;
 	}
 	
 	bool monday(int day){
-		if((day + first_day_week - 1) % 7 == 1)
+		if((day + first_day_week - 1) % 5 == 1)
 			return true;
 		
 		return false;
 	}
 	
 	bool saturday(int day){
-		if((day + first_day_week - 1 )% 7 == 6)
-			return true;
-		
+	  
 		return false;
 	}
 	
 	bool sunday(int day){
-		if((day + first_day_week - 1) % 7 == 0)
-			return true;
-		
 		return false;
 	}
 	
@@ -108,7 +103,7 @@ class Individual{
 			
 			while(true){
 				if(time_machine_i(i, aux_day) >= patData[pat - 1].duration_session){
-					available[aux_day % 7 - 1 ] = 1;
+					available[aux_day % 5 - 1 ] = 1;
 				}
 			
 				if(friday(aux_day))
@@ -196,14 +191,6 @@ class Individual{
                 
                 do{
                         if(category != 1){
-                          
-                                if(saturday(day)){
-                                        day += 2;
-                                }
-                                else if(sunday(day)){
-                                        day += 1;
-                                }
-                                
                                 
                                 if(sessions <= 5 && !fit_week(pat, day, patData)){
                                         day = next_monday(day);
@@ -525,7 +512,7 @@ class Individual{
 		 return false;
 	}
 	
-	bool swap_list_schedul(int start, int end, int pat_list, int pat_schedul, vector <PatientsData> patients_list, vector<PatientsData> patData){
+	bool swap_list_schedul(int start, int end, PatientsData pat_list, PatientsData pat_schedul, vector <PatientsData> patients_list){
 	  
 		//int firstday_aux = schedul[pat_schedul - 1][0].first;
 	  

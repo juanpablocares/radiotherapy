@@ -12,6 +12,12 @@ float random_0_1(){
 	return ((double)rand() / ((double) RAND_MAX));
 }
 
+int random(int min, int max){
+  
+	int r = min + (int)((float)(max - min) * random_0_1()) + 1;
+	return r;
+}
+
 bool order_factor(pair<float, PatientsData> a, pair<float, PatientsData> b){
       return (a.first > b.first);
 }
@@ -55,6 +61,12 @@ bool sort_waiting(PatientsData a, PatientsData b){
       return (a.initialTreatmentDate < b.initialTreatmentDate);
   
       //return false;
+}
+
+bool sort_id(PatientsData a, PatientsData b){
+      
+      return (a.id < b.id);
+
 }
 
 vector <PatientsData> erase_patient(int id, vector <PatientsData> list){
@@ -120,7 +132,6 @@ int main(int argc, char *argv[])
       
       //Lectura de informacion de los pacientes
       vector <PatientsData> patientsData;
-      vector <PatientsData> lista_output;
       //Pacientes que estan en lista de espera por insuficiencia de maquinas en el dia especificado
       vector <PatientsData> patients_waiting;
       //REVISAR MEMORIA ACA, YA QUE PIDO MAS DE LO NECESARIO
@@ -132,6 +143,9 @@ int main(int argc, char *argv[])
       vector<int> time_machines(low_machine + high_machine, tShift);
       //Inicializar parametros de las maquinas
       global.set_time_machines(time_machines, 600, low_machine + high_machine);
+      
+      //Pacientes ya agendados
+      vector <PatientsData> scheduled_pat;
       
       int id = 0;
       //int sum = 0;
@@ -174,8 +188,9 @@ int main(int argc, char *argv[])
 			      else{
 				      //Se puede insertar en la planificacion
 				      global.insert_schedul(patients_waiting[i].id, s, patientsData);
+				      scheduled_pat.push_back(patients_waiting[i]);
+				      std::sort(scheduled_pat.begin(), scheduled_pat.end(), sort_id);
 				      patients_waiting = erase_patient(patients_waiting[i].id, patients_waiting);
-				      lista_output.push_back(patients_waiting[i]);
 			      }
 		      }
 	      
@@ -202,14 +217,22 @@ int main(int argc, char *argv[])
 		      std::sort(patients_waiting.begin(), patients_waiting.end(), sort_waiting);
 		      patients_waiting = order_patients(patients_waiting, d);
 	      }
-	      
-	      if(d % 7 == 0){
+
+	      if(d % 5 == 0){
 		      Individual local;
 		      local.copy(global);
 		      
 		      //Aplicar HC
 		      for(int i = 0; i < iterations; i++){
-			    
+			    Individual local;
+			    local.copy(global);
+			    int num_w = random(1, (int)patients_waiting.size());
+			    int num_sch = random(1, (int)scheduled_pat.size());
+			    cout << "Swap entre: " << num_w << " " << num_sch << endl;
+			    if(local.swap_list_schedul(d-4, d, patients_waiting[num_w-1], scheduled_pat[num_sch], patients_waiting)){
+				   cout << "entro!" << endl;
+				   exit(0);
+			    }
 		      }
 	      }
 
