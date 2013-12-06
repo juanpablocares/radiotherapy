@@ -3,7 +3,7 @@ CC=g++
 CFLAGS=-c -Wall -g -ggdb
 
 seed=1
-instance=profe.rad
+instance=test/test1
 
 all: main
 
