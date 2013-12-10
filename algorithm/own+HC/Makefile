@@ -24,4 +24,4 @@ clean:
 	rm -rf *o main core
 
 exe:
-	./main $(seed) < $(instance) $(iterations)
+	./main $(seed) $(iterations) < $(instance) 

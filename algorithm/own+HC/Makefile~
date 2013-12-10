@@ -3,6 +3,7 @@ CC=g++
 CFLAGS=-c -Wall -g -ggdb
 
 seed=1
+iterations=100
 instance=../test/test
 
 all: main
