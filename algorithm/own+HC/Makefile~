@@ -3,7 +3,9 @@ CC=g++
 CFLAGS=-c -Wall -g -ggdb
 
 seed=1
-iterations=100
+iterations1=10
+iterations2=10
+iterations3=10
 instance=../test/test
 
 all: main
@@ -24,4 +26,4 @@ clean:
 	rm -rf *o main core
 
 exe:
-	./main $(seed) < $(instance) $(iterations)
+	./main $(seed) $(iterations) < $(instance) 

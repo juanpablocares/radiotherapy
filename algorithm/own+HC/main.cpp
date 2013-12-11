@@ -155,7 +155,7 @@ int main(int argc, char *argv[])
       int count = 0;
       for(int d = 1; d <= nDays || !patients_waiting.empty(); d++){
 	      int total_pat;
-	      //cout << d << endl;
+	      cout << d << endl;
 	      if(d <= nDays){
 		    cin >> total_pat;
 		    total_pat_global += total_pat;
@@ -240,7 +240,15 @@ int main(int argc, char *argv[])
 			  int num_w_insert = random(1, (int)local_waiting.size());
 			  if(local.insert_list_to_schedul(d-4, d, local_waiting[num_w_insert-1].id, local_waiting, local_scheduled, patientsData)){
 				local.update_fitness(patientsData);
-				cout << "Global: " << global.get_fitness() << " local: " << local.get_fitness() << endl;
+				if(local.get_fitness() < global.get_fitness()){
+					cout << "Primero: " << local.get_fitness() << " " << global.get_fitness() << endl;
+					global.copy(local);
+					patients_waiting = local_waiting;
+					patients_waiting = order_patients(patients_waiting, d);
+					scheduled_pat = local_scheduled;
+					std::sort(scheduled_pat.begin(), scheduled_pat.end(), sort_id);
+					global.update_fitness(patientsData);
+				}
 			  }
                 }
               }
