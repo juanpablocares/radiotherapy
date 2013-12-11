@@ -620,7 +620,7 @@ class Individual{
 			      insert_schedul(pat_waiting, new_schedul, patData);
 			      
 			      PatientsData aux_waiting = patData[pat_waiting - 1];
-			      PatientsData aux_scheduled = patients_scheduled[pat_schedul - 1];
+			      PatientsData aux_scheduled = patData[pat_schedul - 1];
 			      
 			      patients_waiting = erase_patient(pat_waiting, patients_waiting);
 			      patients_waiting.push_back(aux_scheduled);

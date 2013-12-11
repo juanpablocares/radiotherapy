@@ -572,8 +572,8 @@ class Individual{
 		      if(new_schedul.size() != 0){
 			      //Se puede insertar en la planificacion
 			      insert_schedul(pat_list, new_schedul, patData);
-			      patients_list = erase_patient(patients_list[pat_list - 1].id, patients_list);
-			      patients_list.push_back(patients_list[pat_list - 1]);
+			      patients_waiting = erase_patient(pat_list, patients_waiting);
+			      patients_list.push_back(patData[pat_list - 1]);
 			      return true;
 		      }
 		      
