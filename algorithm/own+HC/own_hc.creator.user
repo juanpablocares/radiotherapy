@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by Qt Creator 2.5.2, 2013-12-10T14:52:10. -->
+<!-- Written by Qt Creator 2.5.2, 2013-12-11T14:48:33. -->
 <qtcreator>
  <data>
   <variable>GenericProjectManager.GenericProject.Toolchain</variable>
@@ -153,7 +153,7 @@
      <value type="int">13</value>
      <value type="int">14</value>
     </valuelist>
-    <value type="QString" key="ProjectExplorer.CustomExecutableRunConfiguration.Arguments">1 100 &lt; ../test/test</value>
+    <value type="QString" key="ProjectExplorer.CustomExecutableRunConfiguration.Arguments">1 0 0 0 &lt; ../../tests/D2_P10_M100005/test_1_2_10.rad</value>
     <value type="int" key="ProjectExplorer.CustomExecutableRunConfiguration.BaseEnvironmentBase">2</value>
     <value type="QString" key="ProjectExplorer.CustomExecutableRunConfiguration.Executable">/home/jp/Documents/tesis/radiotherapy/radiotherapy/algorithm/own+HC/main</value>
     <value type="bool" key="ProjectExplorer.CustomExecutableRunConfiguration.UseTerminal">false</value>

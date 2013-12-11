@@ -235,12 +235,14 @@ class Individual{
                                 int aux_day = day;
                                 interruptions = 0;
                                 assignments.clear();
-                                
+				
                                 do{
+                      if(pat == 79 && day == 22)
+						cout << "asd" << endl;
                                         //Si la capacidad de la maquina es mayor a la necesaria para el tratamiento
                                         //Agregado para considerar mas tiempo en la primera sesion
                                         if(assignments.size() == 0){
-                                                if(time_machine_i(mach, aux_day) >= patData[pat-1].first_session + patData[pat-1].duration_session){
+                                                if(time_machine_i(mach, aux_day) >= patData[pat-1].first_session){
                                                         assignments.push_back(make_pair(aux_day, mach));
                                                         //cout << day << " " << mach << endl;
                                                         aux_day = next_day(aux_day, pat);
@@ -248,6 +250,10 @@ class Individual{
                                                 else{
                                                         interruptions++;
                                                         //cout << "Int: " << interruptions << " " << patData[pat - 1].interruptions << endl; 
+							  if(patData[pat - 1].interruptions == 0){
+								assignments.clear();
+                                                                return assignments;
+							  }
                                                         if(interruptions <= patData[pat - 1].interruptions){
                                                                 assignments.clear();
                                                                 return assignments;
@@ -262,6 +268,10 @@ class Individual{
                                                 }
                                                 else{
                                                         interruptions++;
+							if(patData[pat - 1].interruptions == 0){
+								assignments.clear();
+                                                                return assignments;
+							  }
                                                         //cout << "Int: " << interruptions << " " << patData[pat - 1].interruptions << endl; 
                                                         if(interruptions <= patData[pat - 1].interruptions){
                                                                 assignments.clear();
@@ -269,7 +279,8 @@ class Individual{
                                                         }
                                                 }
 					}
-                                }while(assignments.size() < (unsigned int)patData[pat - 1].nSessions);
+					//cout << day << " " << pat << " " << patData.size() << " " << assignments.size() << " " << patData[pat - 1].nSessions << endl;
+                               }while(assignments.size() < (unsigned int)patData[pat - 1].nSessions);
                                 
                                 mach ++;
                                 
@@ -365,7 +376,7 @@ class Individual{
 		if(pat > (int)schedul.size())
 		      schedul.resize(pat);
 		
-		assign_time_machine(s[0].second, s[0].first, patData[pat - 1].first_session + patData[pat - 1].duration_session);
+		assign_time_machine(s[0].second, s[0].first, patData[pat - 1].first_session);
 		schedul[pat -1].push_back(make_pair(s[0].first, s[0].second));
 		for(unsigned int i = 1; i < s.size(); i++){
 			//cout << time_machine_i(s[i].second, s[i].first) << endl;
@@ -420,7 +431,7 @@ class Individual{
 	}
 	
 	bool shift_patient(int start, int end, int pat, vector<PatientsData> patData){
-		int id = patData[pat -1].id;
+	  
 		if(patData[pat - 1].initialTreatmentDate == schedul[patData[pat -1].id - 1][0].first)
 			return false;
 		
@@ -433,29 +444,29 @@ class Individual{
 			radical--;
 		
 		//Libero recursos
-		for(int i = 0; i < (int)schedul[id - 1].size(); i++){
+		for(int i = 0; i < (int)schedul[pat - 1].size(); i++){
 			if(i == 0)
-				add_time_machine(schedul[id - 1][i].second, schedul[id - 1][i].first, patData[id - 1].first_session + patData[id - 1].duration_session);
+				add_time_machine(schedul[pat - 1][i].second, schedul[pat - 1][i].first, patData[pat - 1].first_session);
 			else
-				add_time_machine(schedul[id - 1][i].second, schedul[id - 1][i].first, patData[id - 1].duration_session);
+				add_time_machine(schedul[pat - 1][i].second, schedul[pat - 1][i].first, patData[pat - 1].duration_session);
 		}
 		
-		schedul[id - 1].clear();
+		schedul[pat - 1].clear();
 		
 		int d = 0;
-		if(start < patData[id - 1].initialTreatmentDate)
-		    d = patData[id - 1].initialTreatmentDate;
+		if(start < patData[pat - 1].initialTreatmentDate)
+		    d = patData[pat - 1].initialTreatmentDate;
 		else
 		    d = start;
 		
 		std::vector < std::pair< int, int > > new_schedul;
 		for( ; d < patData[pat - 1].finalTreatmentDate && d < end  ; d++){
-		      new_schedul = try_insert(patData[pat - 1].id, patData[pat - 1].machine, d, patData);
+		      new_schedul = try_insert(pat, patData[pat - 1].machine, d, patData);
 		      
 		      if(new_schedul.size() != 0){
 			      //Se puede insertar en la planificacion
-			      insert_schedul(patData[pat - 1].id, new_schedul, patData);
-			      patData = erase_patient(patData[pat - 1].id, patData);
+			      insert_schedul(pat, new_schedul, patData);
+			      //patData = erase_patient(patData[pat - 1].id, patData);
 			      return true;
 		      }
 		      
@@ -485,8 +496,6 @@ class Individual{
 	  
 		//Libero recursos
 		//Paciente 1
-		int id1 = patData[pat_schedul1-1].id;
-		int id2 = patData[pat_schedul2-1].id;
 		
 		if(patData[pat_schedul1-1].initialTreatmentDate > end)
 			return false;
@@ -495,22 +504,22 @@ class Individual{
 		if(pat_schedul1 == pat_schedul2)
 			return false;
 		
-		for(int i = 0; i < (int)schedul[id1 - 1].size(); i++){
+		for(int i = 0; i < (int)schedul[pat_schedul1 - 1].size(); i++){
 			if(i == 0)
-				add_time_machine(schedul[id1 - 1][i].second, schedul[id1 - 1][i].first, patData[pat_schedul1 - 1].first_session + patData[pat_schedul1 - 1].duration_session);
+				add_time_machine(schedul[pat_schedul1 - 1][i].second, schedul[pat_schedul1 - 1][i].first, patData[pat_schedul1 - 1].first_session);
 			else
-				add_time_machine(schedul[id1 - 1][i].second, schedul[id1 - 1][i].first, patData[pat_schedul1 - 1].duration_session);
+				add_time_machine(schedul[pat_schedul1 - 1][i].second, schedul[pat_schedul1 - 1][i].first, patData[pat_schedul1 - 1].duration_session);
 		}
-		schedul[id1 - 1].clear();
+		schedul[pat_schedul1 - 1].clear();
 		
 		//Paciente 2
-		for(int i = 0; i < (int)schedul[id2 - 1].size(); i++){
+		for(int i = 0; i < (int)schedul[pat_schedul2 - 1].size(); i++){
 			if(i == 0)
-				add_time_machine(schedul[id2 - 1][i].second, schedul[id2 - 1][i].first, patData[pat_schedul2 - 1].first_session+patData[pat_schedul2 - 1].duration_session);
+				add_time_machine(schedul[pat_schedul2 - 1][i].second, schedul[pat_schedul2 - 1][i].first, patData[pat_schedul2 - 1].first_session);
 			else
-				add_time_machine(schedul[id2 - 1][i].second, schedul[id2 - 1][i].first, patData[pat_schedul2 - 1].duration_session);
+				add_time_machine(schedul[pat_schedul2 - 1][i].second, schedul[pat_schedul2 - 1][i].first, patData[pat_schedul2 - 1].duration_session);
 		}
-		schedul[id2 - 1].clear();
+		schedul[pat_schedul2 - 1].clear();
 		
 		bool pat2 = false;
 		int d2 = 0;
@@ -525,7 +534,7 @@ class Individual{
 		      
 		      if(new_schedul.size() != 0){
 			      //Se puede insertar en la planificacion
-			      insert_schedul(id2, new_schedul, patData);
+			      insert_schedul(pat_schedul2, new_schedul, patData);
 			      pat2 = true;
 			      break;
 		      }
@@ -546,7 +555,7 @@ class Individual{
 		      std::vector < std::pair< int, int > > new_schedul = try_insert(pat_schedul1, patData[pat_schedul1 - 1].machine, d1, patData);
 		      if(new_schedul.size() != 0){
 			      //Se puede insertar en la planificacion
-			      insert_schedul(id1, new_schedul, patData);
+			      insert_schedul(pat_schedul1, new_schedul, patData);
 			      pat1 = true;
 			      break;
 		      }
@@ -598,13 +607,13 @@ class Individual{
 		//Libero recursos
 		for(int i = 0; i < (int)schedul[pat_schedul - 1].size(); i++){
 			if(i == 0)
-				add_time_machine(schedul[pat_schedul - 1][i].second, schedul[pat_schedul - 1][i].first, patData[pat_schedul - 1].first_session + patData[pat_schedul - 1].duration_session);
+				add_time_machine(schedul[pat_schedul - 1][i].second, schedul[pat_schedul - 1][i].first, patData[pat_schedul - 1].first_session);
 			else
 				add_time_machine(schedul[pat_schedul - 1][i].second, schedul[pat_schedul - 1][i].first, patData[pat_schedul - 1].duration_session);
 		}
 		schedul[pat_schedul - 1].clear();
 		
-		int d;
+		int d = 0;
 		if(patData[pat_waiting - 1].initialTreatmentDate < start)
 			d = start;
 		else
@@ -620,7 +629,7 @@ class Individual{
 			      insert_schedul(pat_waiting, new_schedul, patData);
 			      
 			      PatientsData aux_waiting = patData[pat_waiting - 1];
-			      PatientsData aux_scheduled = patients_scheduled[pat_schedul - 1];
+			      PatientsData aux_scheduled = patData[pat_schedul - 1];
 			      
 			      patients_waiting = erase_patient(pat_waiting, patients_waiting);
 			      patients_waiting.push_back(aux_scheduled);
