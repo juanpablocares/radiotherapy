@@ -419,10 +419,18 @@ class Individual{
 		}
 	}
 	
-	bool shift_patient(int start, int end, int pat, vector<PatientsData> patData, vector <PatientsData> patients_list){
-		int id = patients_list[pat -1].id;
-		if(patients_list[pat - 1].initialTreatmentDate == schedul[patients_list[pat -1].id - 1][0].first)
+	bool shift_patient(int start, int end, int pat, vector<PatientsData> patData){
+		int id = patData[pat -1].id;
+		if(patData[pat - 1].initialTreatmentDate == schedul[patData[pat -1].id - 1][0].first)
 			return false;
+		
+		//Descuento el número de pacientes agendados
+		if(patData[pat - 1].category == 1)
+			emergency--;
+		else if(patData[pat - 1].category == 2)
+			palliative--;
+		else
+			radical--;
 		
 		//Libero recursos
 		for(int i = 0; i < (int)schedul[id - 1].size(); i++){
@@ -441,13 +449,13 @@ class Individual{
 		    d = start;
 		
 		std::vector < std::pair< int, int > > new_schedul;
-		for( ; d < patients_list[pat - 1].finalTreatmentDate && d < end  ; d++){
-		      new_schedul = try_insert(patients_list[pat - 1].id, patients_list[pat - 1].machine, d, patData);
+		for( ; d < patData[pat - 1].finalTreatmentDate && d < end  ; d++){
+		      new_schedul = try_insert(patData[pat - 1].id, patData[pat - 1].machine, d, patData);
 		      
 		      if(new_schedul.size() != 0){
 			      //Se puede insertar en la planificacion
-			      insert_schedul(patients_list[pat - 1].id, new_schedul, patData);
-			      patients_list = erase_patient(patients_list[pat - 1].id, patients_list);
+			      insert_schedul(patData[pat - 1].id, new_schedul, patData);
+			      patData = erase_patient(patData[pat - 1].id, patData);
 			      return true;
 		      }
 		      
@@ -547,25 +555,25 @@ class Individual{
 		return (pat1 && pat2);
 	}
 	
-	bool insert_list_to_schedul(int start, int end, int pat_list, vector <PatientsData> &patients_list){
+	bool insert_list_to_schedul(int start, int end, int pat_list, vector<PatientsData> &patients_waiting, vector <PatientsData> &patients_list, vector <PatientsData> patData){
 	  
 		//int firstday_aux = schedul[pat_schedul - 1][0].first;
 		
 		int d;
-		if(patients_list[pat_list - 1].initialTreatmentDate < start)
+		if(patData[pat_list - 1].initialTreatmentDate < start)
 			d = start;
 		else
-			d = patients_list[pat_list - 1].initialTreatmentDate;
+			d = patData[pat_list - 1].initialTreatmentDate;
 		
 		 std::vector < std::pair< int, int > > new_schedul;
-		 for( ; d < patients_list[pat_list - 1].finalTreatmentDate && d < end  ; d++){
-		      new_schedul = try_insert(patients_list[pat_list - 1].id, patients_list[pat_list - 1].machine, d, patients_list);
+		 for( ; d < patData[pat_list - 1].finalTreatmentDate && d < end  ; d++){
+		      new_schedul = try_insert(pat_list, patData[pat_list - 1].machine, d, patData);
 		      
 		      if(new_schedul.size() != 0){
 			      //Se puede insertar en la planificacion
-			      insert_schedul(pat_list, new_schedul, patients_list);
-			      patients_list = erase_patient(patients_list[pat_list - 1].id, patients_list);
-			      patients_list.push_back(patients_list[pat_list - 1]);
+			      insert_schedul(pat_list, new_schedul, patData);
+			      patients_waiting = erase_patient(pat_list, patients_waiting);
+			      patients_list.push_back(patData[pat_list - 1]);
 			      return true;
 		      }
 		      
@@ -576,44 +584,42 @@ class Individual{
 		 return false;
 	}
 	
-	bool swap_list_schedul(int start, int end, int pat_waiting, vector<PatientsData> &patients_waiting, int pat_schedul, vector <PatientsData> &patients_scheduled){
+	bool swap_list_schedul(int start, int end, int pat_waiting, vector<PatientsData> &patients_waiting, int pat_schedul, vector <PatientsData> &patients_scheduled, vector <PatientsData> patData){
 		
 		//int firstday_aux = schedul[pat_schedul - 1][0].first;
-		int id_scheduled = patients_scheduled[pat_schedul - 1].id;
 		//Descuento el número de pacientes agendados
-		if(patients_scheduled[pat_schedul - 1].category == 1)
+		if(patData[pat_schedul - 1].category == 1)
 			emergency--;
-		else if(patients_scheduled[pat_schedul - 1].category == 2)
+		else if(patData[pat_schedul - 1].category == 2)
 			palliative--;
 		else
 			radical--;
 		
 		//Libero recursos
-		for(int i = 0; i < (int)schedul[id_scheduled - 1].size(); i++){
+		for(int i = 0; i < (int)schedul[pat_schedul - 1].size(); i++){
 			if(i == 0)
-				add_time_machine(schedul[id_scheduled - 1][i].second, schedul[id_scheduled - 1][i].first, patients_scheduled[pat_schedul - 1].first_session + patients_scheduled[pat_schedul - 1].duration_session);
+				add_time_machine(schedul[pat_schedul - 1][i].second, schedul[pat_schedul - 1][i].first, patData[pat_schedul - 1].first_session + patData[pat_schedul - 1].duration_session);
 			else
-				add_time_machine(schedul[id_scheduled - 1][i].second, schedul[id_scheduled - 1][i].first, patients_scheduled[pat_schedul - 1].duration_session);
+				add_time_machine(schedul[pat_schedul - 1][i].second, schedul[pat_schedul - 1][i].first, patData[pat_schedul - 1].duration_session);
 		}
-		
-		schedul[id_scheduled - 1].clear();
+		schedul[pat_schedul - 1].clear();
 		
 		int d;
-		if(patients_waiting[pat_waiting - 1].initialTreatmentDate < start)
+		if(patData[pat_waiting - 1].initialTreatmentDate < start)
 			d = start;
 		else
-			d = patients_waiting[pat_waiting - 1].initialTreatmentDate;
+			d = patData[pat_waiting - 1].initialTreatmentDate;
 		 
 		 std::vector < std::pair< int, int > > new_schedul;
-		 for( ; d <= patients_waiting[pat_waiting - 1].finalTreatmentDate && d <= end  ; d++){
+		 for( ; d <= patData[pat_waiting - 1].finalTreatmentDate && d <= end  ; d++){
 		   
-		      new_schedul = try_insert(patients_waiting[pat_waiting - 1].id, patients_waiting[pat_waiting - 1].machine, d, patients_waiting);
+		      new_schedul = try_insert(pat_waiting, patData[pat_waiting - 1].machine, d, patData);
 		      
 		      if(new_schedul.size() != 0){
 			      //Se puede insertar en la planificacion
-			      insert_schedul(pat_waiting, new_schedul, patients_waiting);
+			      insert_schedul(pat_waiting, new_schedul, patData);
 			      
-			      PatientsData aux_waiting = patients_waiting[pat_waiting - 1];
+			      PatientsData aux_waiting = patData[pat_waiting - 1];
 			      PatientsData aux_scheduled = patients_scheduled[pat_schedul - 1];
 			      
 			      patients_waiting = erase_patient(pat_waiting, patients_waiting);
@@ -622,12 +628,6 @@ class Individual{
 			      patients_scheduled = erase_patient(pat_schedul, patients_scheduled);
 			      patients_scheduled.push_back(aux_waiting);
 			      
-			      if(patients_waiting[pat_waiting - 1].category == 1)
-				      emergency++;
-			      else if(patients_waiting[pat_waiting - 1].category == 2)
-				      palliative++;
-			      else
-				      radical++;
 			      return true;
 		      }
 		      
