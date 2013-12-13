@@ -74,7 +74,6 @@ int main(int argc, char *argv[])
 { 
       //Parametros algoritmo
       int seed = atoi(argv[1]);
-      int iterations = atoi(argv[2]);
       
       int nDays;
       //Fin parametros algoritmo
@@ -139,7 +138,7 @@ int main(int argc, char *argv[])
       int count = 0;
       for(int d = 1; d <= nDays || !patients_waiting.empty(); d++){
 	      int total_pat;
-	      //cout << d << endl;
+	      cout << d << endl;
 	      if(d <= nDays){
 		    cin >> total_pat;
 		    total_pat_global += total_pat;
@@ -202,17 +201,6 @@ int main(int argc, char *argv[])
 		      std::sort(patients_waiting.begin(), patients_waiting.end(), sort_waiting);
 		      patients_waiting = order_patients(patients_waiting, d);
 	      }
-	      
-	      if(d % 7 == 0){
-		      Individual local;
-		      local.copy(global);
-		      
-		      //Aplicar HC
-		      for(int i = 0; i < iterations; i++){
-			    
-		      }
-	      }
-
       }
       //cout << endl << "Solucion" << endl;
       //cout << "N: " << count << endl;

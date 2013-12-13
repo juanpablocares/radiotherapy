@@ -4,7 +4,7 @@
 #include <algorithm>
 
 #define FIRST 5.0
-#define max_days 200
+#define max_days 600
 
 using namespace std; 
 
@@ -156,7 +156,7 @@ int main(int argc, char *argv[])
       int count = 0;
       for(int d = 1; d <= nDays || !patients_waiting.empty(); d++){
 		int total_pat;
-		cout << d << endl;
+		//cout << d << endl;
 		if(d <= nDays){
 			cin >> total_pat;
 			total_pat_global += total_pat;
@@ -225,24 +225,24 @@ int main(int argc, char *argv[])
 			global.update_fitness(patientsData);
 			//Aplicar HC
 			for(int i = 0; i < iterations1 && (int)patients_waiting.size() > 0; i++){
-				cout << "IT1: " << i << endl;
+				//cout << "IT1: " << i << endl;
 				vector <PatientsData> local_waiting = patients_waiting;
 				vector <PatientsData> local_scheduled = scheduled_pat;
 				Individual local;
 				local.copy(global);
 				int num_w = random(1, (int)local_waiting.size());
 				int num_sch = random(1, (int)local_scheduled.size());
-				cout << local_waiting.size() << " " << local_scheduled.size() << endl;
+				//cout << local_waiting.size() << " " << local_scheduled.size() << endl;
 				if(local.swap_list_schedul(d-4, d, local_waiting[num_w-1].id, local_waiting, local_scheduled[num_sch-1].id, local_scheduled, patientsData)){
 					  local.update_fitness(patientsData);
 					  local_waiting = order_patients(local_waiting, d);
 					  std::sort(local_scheduled.begin(), local_scheduled.end(), sort_id);
-					  cout << "entro" << endl;
-					  /*int num_w_insert = random(1, (int)local_waiting.size());
+					  //cout << "entro" << endl;
+					  int num_w_insert = random(1, (int)local_waiting.size());
 					  if(local.insert_list_to_schedul(d-4, d, local_waiting[num_w_insert-1].id, local_waiting, local_scheduled, patientsData)){
 						local.update_fitness(patientsData);
 						if(local.get_fitness() < global.get_fitness()){
-							cout << "Primero: " << local.get_fitness() << " " << global.get_fitness() << endl;
+							//cout << "Primero: " << local.get_fitness() << " " << global.get_fitness() << endl;
 							global.copy(local);
 							patients_waiting = local_waiting;
 							patients_waiting = order_patients(patients_waiting, d);
@@ -250,12 +250,14 @@ int main(int argc, char *argv[])
 							std::sort(scheduled_pat.begin(), scheduled_pat.end(), sort_id);
 							global.update_fitness(patientsData);
 						}
-					  }*/
+					  }
 				}
+				local_waiting.clear();
+				local_scheduled.clear();
 			}
 			
 			for(int i = 0; i < iterations2; i++){
-				cout << "IT2: " << i << endl;
+				//cout << "IT2: " << i << endl;
 				vector <PatientsData> local_waiting = patients_waiting;
 				vector <PatientsData> local_scheduled = scheduled_pat;
 				Individual local;
@@ -267,7 +269,7 @@ int main(int argc, char *argv[])
 				if(local.swap_schedul_schedul(d-4, d, local_scheduled[num_p1-1].id, local_scheduled[num_p2-1].id, patientsData)){
 					local.update_fitness(patientsData);
 					if(local.get_fitness() < global.get_fitness()){
-						cout << "Segundo: " << local.get_fitness() << " " << global.get_fitness() << endl;
+						//cout << "Segundo: " << local.get_fitness() << " " << global.get_fitness() << endl;
 						global.copy(local);
 						patients_waiting = local_waiting;
 						patients_waiting = order_patients(patients_waiting, d);
@@ -276,10 +278,12 @@ int main(int argc, char *argv[])
 						global.update_fitness(patientsData);
 					}
 				}
+				local_waiting.clear();
+				local_scheduled.clear();
 			}
 			
 			for(int i = 0; i < iterations3; i++){
-				  cout << "IT3: " << i << endl;
+				  //cout << "IT3: " << i << endl;
 				  vector <PatientsData> local_waiting = patients_waiting;
 				  vector <PatientsData> local_scheduled = scheduled_pat;
 				  Individual local;
@@ -289,7 +293,7 @@ int main(int argc, char *argv[])
 				  if(local.shift_patient(	d-4, d, local_scheduled[num_p-1].id, patientsData)){
 					  local.update_fitness(patientsData);
 					  if(local.get_fitness() < global.get_fitness()){
-						  cout << "Tercero: " << local.get_fitness() << " " << global.get_fitness() << endl;
+						  //cout << "Tercero: " << local.get_fitness() << " " << global.get_fitness() << endl;
 						  global.copy(local);
 						  patients_waiting = local_waiting;
 						  std::sort(patients_waiting.begin(), patients_waiting.end(), sort_waiting);
@@ -299,6 +303,8 @@ int main(int argc, char *argv[])
 						  global.update_fitness(patientsData);
 					  }
 				  }
+				  local_waiting.clear();
+				  local_scheduled.clear();
 			}
 		}
       }
@@ -308,8 +314,8 @@ int main(int argc, char *argv[])
       //cout << "Urgentes: " << global.getEmergency() << endl;
       //cout << "Paliativos: " << global.getPalliative() << endl;
       //cout << "Radicales: " << global.getRadical() << endl;
-      
-      global.show_vector(global.getEmergency(), global.getPalliative(), global.getRadical(), patientsData);
+      cout << "SATISFIABLE " << "CPUTime_Mean = 0.0 " << "BestSolution_Mean " << global.get_fitness() << endl;
+      //global.show_vector(global.getEmergency(), global.getPalliative(), global.getRadical(), patientsData);
       
       return 0;
 }

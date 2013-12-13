@@ -146,6 +146,23 @@ class Individual{
 	
 	public:
 	
+	~Individual(){
+		//Scheduling
+		for(int i = 0; i < (int)schedul.size(); i++){
+			vector < pair< int, int > >().swap(schedul[i]);
+		}
+		vector< vector < pair< int, int > > >().swap(schedul);
+		
+		//Interrupciones de pacientes
+		vector<int>().swap(interruptions_pat);
+		
+		//Tiempo disponible por maquina en cada dia <dia, tiempo>
+		for(int i = 0; i < (int)available_time.size(); i++)
+			std::list< pair<int, float> >().swap(available_time[i]);
+		
+		std::vector < std::list< pair<int, float> > >().swap(available_time);
+	}
+	  
 	void copy(Individual in){
 		
 		emergency = in.emergency;
@@ -156,6 +173,21 @@ class Individual{
 		high_mach = in.high_mach;
 		low_mach = in.low_mach;
 		first_day_week = in.first_day_week;
+		
+		//Scheduling
+		for(int i = 0; i < (int)schedul.size(); i++){
+			vector < pair< int, int > >().swap(schedul[i]);
+		}
+		vector< vector < pair< int, int > > >().swap(schedul);
+		
+		//Interrupciones de pacientes
+		vector<int>().swap(interruptions_pat);
+		
+		//Tiempo disponible por maquina en cada dia <dia, tiempo>
+		for(int i = 0; i < (int)available_time.size(); i++)
+			std::list< pair<int, float> >().swap(available_time[i]);
+		
+		std::vector < std::list< pair<int, float> > >().swap(available_time);
 		
 		schedul.resize(in.schedul.size());
 		for(int i = 0; i < (int)in.schedul.size(); i++){
@@ -249,7 +281,8 @@ class Individual{
                                                         interruptions++;
                                                         //cout << "Int: " << interruptions << " " << patData[pat - 1].interruptions << endl; 
 							  if(patData[pat - 1].interruptions == 0){
-								assignments.clear();
+								  assignments.clear();
+								  break;
                                                                 return assignments;
 							  }
                                                         if(interruptions <= patData[pat - 1].interruptions){
@@ -268,6 +301,7 @@ class Individual{
                                                         interruptions++;
 							if(patData[pat - 1].interruptions == 0){
 								assignments.clear();
+								break;
                                                                 return assignments;
 							  }
                                                         //cout << "Int: " << interruptions << " " << patData[pat - 1].interruptions << endl; 

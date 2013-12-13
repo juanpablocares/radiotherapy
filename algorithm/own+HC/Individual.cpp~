@@ -146,6 +146,23 @@ class Individual{
 	
 	public:
 	
+	~Individual(){
+		//Scheduling
+		for(int i = 0; i < (int)schedul.size(); i++){
+			vector < pair< int, int > >().swap(schedul[i]);
+		}
+		vector< vector < pair< int, int > > >().swap(schedul);
+		
+		//Interrupciones de pacientes
+		vector<int>().swap(interruptions_pat);
+		
+		//Tiempo disponible por maquina en cada dia <dia, tiempo>
+		for(int i = 0; i < (int)available_time.size(); i++)
+			std::list< pair<int, float> >().swap(available_time[i]);
+		
+		std::vector < std::list< pair<int, float> > >().swap(available_time);
+	}
+	  
 	void copy(Individual in){
 		
 		emergency = in.emergency;
@@ -237,8 +254,6 @@ class Individual{
                                 assignments.clear();
 				
                                 do{
-                      if(pat == 79 && day == 22)
-						cout << "asd" << endl;
                                         //Si la capacidad de la maquina es mayor a la necesaria para el tratamiento
                                         //Agregado para considerar mas tiempo en la primera sesion
                                         if(assignments.size() == 0){
@@ -251,7 +266,8 @@ class Individual{
                                                         interruptions++;
                                                         //cout << "Int: " << interruptions << " " << patData[pat - 1].interruptions << endl; 
 							  if(patData[pat - 1].interruptions == 0){
-								assignments.clear();
+								  assignments.clear();
+								  break;
                                                                 return assignments;
 							  }
                                                         if(interruptions <= patData[pat - 1].interruptions){
@@ -270,6 +286,7 @@ class Individual{
                                                         interruptions++;
 							if(patData[pat - 1].interruptions == 0){
 								assignments.clear();
+								break;
                                                                 return assignments;
 							  }
                                                         //cout << "Int: " << interruptions << " " << patData[pat - 1].interruptions << endl; 
