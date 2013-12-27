@@ -6,8 +6,14 @@
 \caption{Generator}
 \begin{algorithmic}[1]
 \Procedure{Generator}{}
-\Require $id$, $machine$, $day$
+\Require $dia$
 \For{$d:=1$ \textbf{to} $days$}
+
+\If{$categoria <> urgente$}
+	\If{$domingo(dia) = verdadero$}
+		\State $dia \gets dia + 1$
+	\EndIf
+\EndIf
 
 \State $pat\_day \gets random(0, total\_pat)$
 

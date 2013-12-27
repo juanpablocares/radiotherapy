@@ -1,0 +1,61 @@
+El generador recibe como entrada el n\'umero de pacientes $N$ que se desea generar por categor\'ia, junto con las proporciones de pacientes que se desean generar ($prop\_eme$, $prop\_rad$, $prop\_pal$). Con esta informaci\'on el algoritmo realiza los c\'alculos para determinar el n\'umero de pacientes a generar por cada una de las categor\'ias. Tambi\'en recibe como par\'ametro el n\'umero de m\'aquinas de alta y baja energ\'ia ($n\_high, n\_low$), de las cuales, cada paciente tiene una probabilidad de ser asignado a estas ($prob\_h\_eme, prob\_h\_pal, prob\_h\_rad$). La determinaci\'on de la m\'aquina ser\'a determinada por la generaci\'on de n\'umero aleatorio. Luego, para cada uno de los pacientes se les asigna un n\'umero de sesiones junto con sus respectivos d\'ias esperados para comenzar sus tratamientos. El n\'umero de sesiones es determinado por una tasa que es un par\'ametro del algoritmo ($ses\_eme, ses\_pal, ses\_rad$), donde la cantidad de posibles sesiones est\'a determinado por $groups\_eme, 
+groups\_rad, groups\_pal$, que corresponde a la cantidad de sesiones que puede tener un paciente de una categor\'ia. Finalmente, aleatoriamente a cada uno de los pacientes les descuenta un numero $r$ de d\'ias entre $0$ y el n\'umero de sesiones que tiene asignado.
+
+The generator receives as input the number of patients $N$, with their respective proportions for each category ($ prop\_eme, prop\_rad, prop\_pal $). With this information the algorithm determine the number of patients to be assigned in the categories. The algorithm also receives the number of machines of high and low energy $n\_high, n\_low $, where each patient has a chance of being assigned to each machine that depends on the probabilities of being assigned for each machine ($prob\_h\_eme, prob\_h\_pal, prob\_h\_rad$). Then, for each patient assign a number of sessions, with their expected day to begin the treatment. The number of sessions depends on a rate, which is also a parameter ($ses\_eme, ses\_pal, ses\_rad$), where the number of possible sessions is determined by $groups\_eme, groups\_rad, groups\_pal$. Finally randomly to each patient will reduce $r$ number of days.
+
+\begin{algorithm}
+\caption{Generator}
+\begin{algorithmic}[1]
+\Procedure{Generator}{$N, prop\_eme, prop\_rad, prop\_pal, groups\_eme, groups\_rad, groups\_pal, ses\_eme, ses\_pal, ses\_rad, n\_high, n\_low, prob\_h\_eme, prob\_h\_pal, prob\_h\_rad$}
+
+\State $new\_case \gets NULL$
+
+\State $n\_eme \gets 0$
+\State $n\_pal \gets 0$
+\State $n\_rad \gets 0$
+\State $total \gets prop\_eme + prop\_rad + prop\_pal$
+
+\State $n\_eme \gets N \cdot \frac{prop\_eme}{total}$
+\State $n\_pal \gets N \cdot \frac{prop\_pal}{total}$
+\State $n\_rad \gets N \cdot \frac{prop\_rad}{total}$
+
+\State $new\_case \gets n\_high$
+\State $new\_case \gets n\_low$
+
+\State $new\_case \gets number\_patients(n\_eme, n\_pal, n_\_rad)$
+\For{$p:=1$}{$total$}
+	\State $release\_date \gets 1$
+	\State $sessions \gets 0$
+	\If{$p \leq emergency$}
+		\State $sessions \gets number\_sessions(groups\_eme, ses\_eme)$
+		\State $new\_case \gets machine(prob\_h\_eme)$
+		\State $due\_date \gets release\_date + 2$
+	\ElsIf{$p \leq emergency + paliative$}
+		\State $sessions \gets number\_sessions(groups\_pal, ses\_pal)$
+		\State $new\_case \gets machine(prob\_h\_pal)$
+		\State $due\_date \gets release\_date + 14$
+	\Else
+		\State $sessions \gets number\_sessions(groups\_rad, ses\_rad)$
+		\State $new\_case \gets machine(prob\_h\_rad)$
+		\State $due\_date \gets release\_date + 28$
+	\EndIf
+	
+	\State $new\_case \gets sessions$
+	\State $r \gets random(0, sessions)$
+	
+	\State $release\_date \gets release\_date - r$
+	\State $due\_date \gets due\_date - r$
+	
+	\If{$release\_date < 1$}
+		\State $release\_date \gets 1$
+	\ElsIf{$due\_date < 1$}
+		\State $due\_date \gets 1$
+	\EndIf
+	
+	\State $new\_case \gets release\_date$
+	\State $new\_case \gets due\_date$
+\EndFor
+
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
