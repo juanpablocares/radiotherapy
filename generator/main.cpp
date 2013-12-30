@@ -166,12 +166,13 @@ int main(int argc, char *argv[])
 	cin >> first_time;
 	
 	vector<int> delay;
+	
 	for(int i = 0; i < categories; i++){
 		int aux;
 		cin >> aux;
 		delay.push_back(aux);
 	}
-	
+
 	vector<int> groups;
 	for(int i = 0; i < categories; i++){
 		int aux;
@@ -224,6 +225,7 @@ int main(int argc, char *argv[])
 			float r = 0.0;
 			for(int i = 0; i < categories; i++){
 				r += p[i];
+				//cout << "RANDOM: " << aleatorio << " " << r << endl;
 				if(aleatorio < r){
 				      type = i+1;
 				      beg = d + 1;
@@ -233,7 +235,7 @@ int main(int argc, char *argv[])
 				      interruptions = random_generator(0,ceil(prob_interruption[i] * (float)sessions));
 				      double r_m = ((double)rand() / ((double) RAND_MAX));
 				      machine = set_machine(r_m, n_mach, prob_mach[i]);
-				      
+				      break;
 				}
 			}
 			
