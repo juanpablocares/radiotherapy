@@ -151,14 +151,14 @@ int main(int argc, char *argv[])
 		cin >> aux;
 		p.push_back(aux);
 	}
-	
+// 	cout << "Interrupciones" << endl;
 	vector<float> prob_interruption;
 	for(int i = 0; i < categories; i++){
 		float aux;
 		cin >> aux;
 		prob_interruption.push_back(aux);
 	}
-	
+// 	cout << "Tiempo sesiones" << endl;
 	float time_ses;
 	cin >> time_ses;
 	
@@ -166,13 +166,13 @@ int main(int argc, char *argv[])
 	cin >> first_time;
 	
 	vector<int> delay;
-	
+// 	cout << "Delay" << endl;
 	for(int i = 0; i < categories; i++){
 		int aux;
 		cin >> aux;
 		delay.push_back(aux);
 	}
-
+// 	cout << "Grupos" << endl;
 	vector<int> groups;
 	for(int i = 0; i < categories; i++){
 		int aux;
@@ -186,11 +186,12 @@ int main(int argc, char *argv[])
 	prob_ses.resize(categories);
 	for(int i = 0; i < categories; i++){
 		for(int j = 0; j < groups[i]; j++){
+		      cout << "Ses y prob: " << i << " " << j << endl;
+		      float aux2;
+		      cin >> aux2;
 		      int aux;
 		      cin >> aux;
 		      ses[i].push_back(aux);
-		      float aux2;
-		      cin >> aux2;
 		      prob_ses[i].push_back(aux2);
 		}
 	}
@@ -199,6 +200,7 @@ int main(int argc, char *argv[])
 	prob_mach.resize(categories);
 	for(int i = 0; i < categories; i++){
 		for(int j = 0; j < n_mach; j++){
+			cout << "Prob maq: " << i << " " << j << endl;
 			float aux; 
 			cin >> aux;
 			prob_mach[i].push_back(aux);
@@ -278,8 +280,8 @@ int main(int argc, char *argv[])
 		
 		for(int i = 0; i <total_pat; i++){
 			cout << list_patients[i].type << " " ;
-			//cout << list_patients[i].begin << " " ;
-			//cout << list_patients[i].end << " " ;
+			cout << list_patients[i].begin << " " ;
+			cout << list_patients[i].end << " " ;
 			cout << list_patients[i].sessions << " " ;
 			cout << list_patients[i].interruptions << " " ;
 			cout << list_patients[i].machine << " " ;
