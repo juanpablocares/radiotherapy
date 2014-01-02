@@ -16,5 +16,5 @@ find -name "*.rad" -print0 | \
     (while read -d $'\0' i;
     do
 out=$OutDir"/"${i/rad/out};
-    ./../algorithm/own+HC/main 1 100 50 1000 < ${i:2} > ${out};
+    ./../algorithm/own+hc/main 1 100 50 1000 < ${i:2} > ${out};
     done)

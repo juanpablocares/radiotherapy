@@ -241,7 +241,7 @@ int main(int argc, char *argv[])
 					  int num_w_insert = random(1, (int)local_waiting.size());
 					  if(local.insert_list_to_schedul(d-4, d, local_waiting[num_w_insert-1].id, local_waiting, local_scheduled, patientsData)){
 						local.update_fitness(patientsData);
-						if(local.get_fitness() < global.get_fitness()){
+						if(local.get_fitness() <= global.get_fitness()){
 							//cout << "Primero: " << local.get_fitness() << " " << global.get_fitness() << endl;
 							global.copy(local);
 							patients_waiting = local_waiting;
@@ -290,7 +290,7 @@ int main(int argc, char *argv[])
 				  local.copy(global);
 				  int num_p = random(1, (int)local_scheduled.size());
 				  
-				  if(local.shift_patient(	d-4, d, local_scheduled[num_p-1].id, patientsData)){
+				  if(local.shift_patient(d-4, d, local_scheduled[num_p-1].id, patientsData)){
 					  local.update_fitness(patientsData);
 					  if(local.get_fitness() < global.get_fitness()){
 						  //cout << "Tercero: " << local.get_fitness() << " " << global.get_fitness() << endl;
@@ -314,8 +314,8 @@ int main(int argc, char *argv[])
       //cout << "Urgentes: " << global.getEmergency() << endl;
       //cout << "Paliativos: " << global.getPalliative() << endl;
       //cout << "Radicales: " << global.getRadical() << endl;
-      cout << "SATISFIABLE " << "CPUTime_Mean = 0.0 " << "BestSolution_Mean " << global.get_fitness() << endl;
-      //global.show_vector(global.getEmergency(), global.getPalliative(), global.getRadical(), patientsData);
+      //cout << "SATISFIABLE " << "CPUTime_Mean = 0.0 " << "BestSolution_Mean = " << global.get_fitness() << endl;
+      global.show_vector(global.getEmergency(), global.getPalliative(), global.getRadical(), patientsData);
       
       return 0;
 }
