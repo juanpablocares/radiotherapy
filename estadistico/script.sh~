@@ -1,7 +1,7 @@
 #!/bin/bash
 
-MainDir=/home/jp/Documents/tesis/radiotherapy/radiotherapy/results/own+hc
-OutDir=/home/jp/Documents/tesis/radiotherapy/radiotherapy/estadistico/output
+MainDir=/home/jp/Documents/radiotherapy/results/own+hc
+OutDir=/home/jp/Documents/radiotherapy/estadistico/output
 
 cd $MainDir
 
