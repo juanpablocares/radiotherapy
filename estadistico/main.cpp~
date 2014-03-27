@@ -23,8 +23,8 @@ float pr_delta(std::vector<std::vector < std::pair< int, int > > > schedul, vect
 	int count_rad = 0;
 	for(int i = 0; i < (int)schedul.size(); i++){
 	  
-		if(schedul[i][0].first > patData[i].initialTreatmentDate){
-			float aux = ((float)(schedul[i][0].first - patData[i].initialTreatmentDate));
+		if(schedul[i][0].first > patData[i].finalTreatmentDate){
+			float aux = ((float)(schedul[i][0].first - patData[i].finalTreatmentDate));
 			
 			if(i < eme){
 				prom_eme += aux;
@@ -74,25 +74,25 @@ float desv_delta(std::vector<std::vector < std::pair< int, int > > > schedul, ve
 			exit(0);
 		}
 	  
-		if(schedul[i][0].first > patData[i].initialTreatmentDate){
-			float aux = ((float)(schedul[i][0].first - patData[i].initialTreatmentDate)) - prom_delta;
+		if(schedul[i][0].first > patData[i].finalTreatmentDate){
+			float aux = ((float)(schedul[i][0].first - patData[i].finalTreatmentDate)) - prom_delta;
 			aux = aux * aux;
 			desv += aux;
 			if(i < eme){
-				float aux_eme = ((float)(schedul[i][0].first - patData[i].initialTreatmentDate));
+				float aux_eme = ((float)(schedul[i][0].first - patData[i].finalTreatmentDate));
 				aux_eme = aux_eme * aux_eme;
 				desv_eme += aux_eme;
 				count_eme++;
 			}
 			else if(i < eme + pal){
-				float aux_pal = ((float)(schedul[i][0].first - patData[i].initialTreatmentDate));
+				float aux_pal = ((float)(schedul[i][0].first - patData[i].finalTreatmentDate));
 				//cout << aux_pal << endl;
 				aux_pal = aux_pal * aux_pal;
 				desv_pal += aux_pal;
 				count_pal++;
 			}
 			else if(i < eme + pal + rad){
-				float aux_rad = ((float)(schedul[i][0].first - patData[i].initialTreatmentDate));
+				float aux_rad = ((float)(schedul[i][0].first - patData[i].finalTreatmentDate));
 				aux_rad = aux_rad * aux_rad;
 				desv_rad += aux_rad;
 				count_rad++;
@@ -204,16 +204,10 @@ int calculate_delay(std::vector<std::vector < std::pair< int, int > > > schedul,
 		delay += patientsData[i].days_delay;
 		if(i < nEme && schedul[i][0].first - patientsData[i].initialTreatmentDate > 0)
 		      delay_eme += schedul[i][0].first - patientsData[i].initialTreatmentDate;
-		else if(i < nEme && schedul[i][0].first - patientsData[i].initialTreatmentDate < 0)
-			cout << "LA CTM" << endl;
 		else if(i < nEme + nPal && schedul[i][0].first - patientsData[i].initialTreatmentDate > 0)
 		      delay_pal += schedul[i][0].first - patientsData[i].initialTreatmentDate;
-		else if(i < nEme + nPal && schedul[i][0].first - patientsData[i].initialTreatmentDate < 0)
-			cout << "LA CTM" << endl;
 		else if(i < nEme + nPal + nRad && schedul[i][0].first - patientsData[i].initialTreatmentDate > 0)
 		      delay_rad += schedul[i][0].first - patientsData[i].initialTreatmentDate;
-		else if(i < nEme + nPal + nRad && schedul[i][0].first - patientsData[i].initialTreatmentDate < 0)
-			cout << "LA CTM" << endl;
 	}
 	//cout << "Delay: " << endl;
 	//cout << delay_eme << " ";
