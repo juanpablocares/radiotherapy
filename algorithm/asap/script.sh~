@@ -15,6 +15,18 @@ out=$OutDir"/"$i
 find -name "*.rad" -print0 | \
     (while read -d $'\0' i;
     do
-out=$OutDir"/"${i/rad/out};
-    ./../algorithm/asap/main 1 < ${i:2} > ${out};
+out=$OutDir"/"${i/.rad/};
+    mkdir $out
+    done)
+
+        
+find -name "*.rad" -print0 | \
+    (while read -d $'\0' i;
+    do
+	count=1;
+	(while
+		out=$OutDir"/"$i"/"${i/rad/out};
+		./../algorithm/asap/main 1 < ${i:2} > ${out};
+		count=count+1;
+	done)
     done)

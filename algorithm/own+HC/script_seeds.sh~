@@ -8,18 +8,20 @@ cd $MainDir
 ls | \
     (while read i;
     do 
-    out=$OutDir"/"$i
+    out=$OutDir"/"${i};
     mkdir $out;
     done)
         
 find -name "*.rad" -print0 | \
     (while read -d $'\0' i;
     do
-    out=$OutDir"/"${i/.rad/};
-    mkdir $out
-	 COUNTER=1
-         (while [  $COUNTER -lt 21 ]; do
-             let COUNTER=COUNTER+1 
-             echo $out"/"${i};
+    i=${i/"./test"/"test"}
+    mkdir $OutDir"/"${i/.rad/};
+    COUNTER=1
+         (while [  $COUNTER -le 2 ]; do
+	     out=$OutDir"/"${i/.rad/};
+	     out=$out"/out_"$COUNTER;
+	     ./../algorithm/own+HC/main $COUNTER 10 10 10 < ${i} > ${out};
+             let COUNTER=COUNTER+1
          done)
     done)
