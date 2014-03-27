@@ -150,38 +150,37 @@ int main(int argc, char *argv[])
 	      //Analizar los pacientes que se deben atener en el dia d
 		      for(int i = 0; i < week && (int)patients_waiting.size(); i++){
 			      //cout << "Inicial: " << patients_waiting[i].initialTreatmentDate << " actual " << d << endl;
- 			      if(patients_waiting[i].initialTreatmentDate > d){
- 				      break;
-			      }
+ 			      if(!(patients_waiting[i].initialTreatmentDate > d)){
 
-			      std::vector < std::pair< int, int > > s;
-			      
-			      int local_machine = patients_waiting[i].machine;
-			      if(patients_waiting[i].machine == 3){
-				    float r = random_0_1();
-				    if(r < 0.5)
-					  local_machine = 1;
-				    else
-					  local_machine = 2;
-			      }
-			      
-			      s = global.asap_algorithm(patients_waiting[i].id, local_machine, patientsData);
-			      
-			      if(s.size() == 0){
-				      //global.show_vector();
-				      cout << "PROBLEMA " << patients_waiting[i].id << endl;
-				      exit(0);
-				      //cout << global.time_machine_i(0, d) << endl;
-				      //Update lista
-				      std::sort(patients_waiting.begin(), patients_waiting.end(), sort_waiting);
-				      patients_waiting = order_patients(patients_waiting, d);
-				      quan_pat[d]++;
-				      //exit(0);
-			      }
-			      else{
-				      //Se puede insertar en la planificacion
-				      global.insert_schedul(patients_waiting[i].id, s, patientsData);
-				      patients_waiting = erase_patient(patients_waiting[i].id, patients_waiting);
+					std::vector < std::pair< int, int > > s;
+					
+					int local_machine = patients_waiting[i].machine;
+					if(patients_waiting[i].machine == 3){
+					      float r = random_0_1();
+					      if(r < 0.5)
+						    local_machine = 1;
+					      else
+						    local_machine = 2;
+					}
+					
+					s = global.asap_algorithm(patients_waiting[i].id, local_machine, patientsData);
+					
+					if(s.size() == 0){
+						//global.show_vector();
+						cout << "PROBLEMA " << patients_waiting[i].id << endl;
+						exit(0);
+						//cout << global.time_machine_i(0, d) << endl;
+						//Update lista
+						std::sort(patients_waiting.begin(), patients_waiting.end(), sort_waiting);
+						patients_waiting = order_patients(patients_waiting, d);
+						quan_pat[d]++;
+						//exit(0);
+					}
+					else{
+						//Se puede insertar en la planificacion
+						global.insert_schedul(patients_waiting[i].id, s, patientsData);
+						patients_waiting = erase_patient(patients_waiting[i].id, patients_waiting);
+					}
 			      }
 		      }
 	      
