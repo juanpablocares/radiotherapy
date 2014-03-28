@@ -268,7 +268,7 @@ int main(int argc, char *argv[])
 				
 				if(local.swap_schedul_schedul(d-4, d, local_scheduled[num_p1-1].id, local_scheduled[num_p2-1].id, patientsData)){
 					local.update_fitness(patientsData);
-					if(local.get_fitness() < global.get_fitness()){
+					if(local.get_fitness() <= global.get_fitness()){
 						//cout << "Segundo: " << local.get_fitness() << " " << global.get_fitness() << endl;
 						global.copy(local);
 						patients_waiting = local_waiting;
@@ -292,7 +292,7 @@ int main(int argc, char *argv[])
 				  
 				  if(local.shift_patient(d-4, d, local_scheduled[num_p-1].id, patientsData)){
 					  local.update_fitness(patientsData);
-					  if(local.get_fitness() < global.get_fitness()){
+					  if(local.get_fitness() <= global.get_fitness()){
 						  //cout << "Tercero: " << local.get_fitness() << " " << global.get_fitness() << endl;
 						  global.copy(local);
 						  patients_waiting = local_waiting;
