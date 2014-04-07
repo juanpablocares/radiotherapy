@@ -202,12 +202,12 @@ int calculate_delay(std::vector<std::vector < std::pair< int, int > > > schedul,
 	
 	for(int i = 0; i < (int)schedul.size(); i++){	  
 		delay += patientsData[i].days_delay;
-		if(i < nEme && schedul[i][0].first - patientsData[i].finalTreatmentDate > 0)
-		      delay_eme += schedul[i][0].first - patientsData[i].finalTreatmentDate;
-		else if(i < nEme + nPal && schedul[i][0].first - patientsData[i].finalTreatmentDate > 0)
-		      delay_pal += schedul[i][0].first - patientsData[i].finalTreatmentDate;
-		else if(i < nEme + nPal + nRad && schedul[i][0].first - patientsData[i].finalTreatmentDate > 0)
-		      delay_rad += schedul[i][0].first - patientsData[i].finalTreatmentDate;
+		if(i < nEme && schedul[i][0].first - patientsData[i].initialTreatmentDate > 0)
+		      delay_eme += schedul[i][0].first - patientsData[i].initialTreatmentDate;
+		else if(i < nEme + nPal && schedul[i][0].first - patientsData[i].initialTreatmentDate > 0)
+		      delay_pal += schedul[i][0].first - patientsData[i].initialTreatmentDate;
+		else if(i < nEme + nPal + nRad && schedul[i][0].first - patientsData[i].initialTreatmentDate > 0)
+		      delay_rad += schedul[i][0].first - patientsData[i].initialTreatmentDate;
 	}
 	//cout << "Delay: " << endl;
 	//cout << delay_eme << " ";
@@ -312,12 +312,13 @@ int main(int argc, char *argv[])
 	//Fin leer entrada
 	//show_vector(schedul);
 	
-	cout << nEme << " " << nPal << " " << nRad << " ";
-	cout << calculate_delay(schedul, patientsData, nEme, nPal, nRad) << " ";
+	//cout << nEme << " " << nPal << " " << nRad << " ";
+	//cout << calculate_delay(schedul, patientsData, nEme, nPal, nRad) << " ";
+	cout << calculate_delay(schedul, patientsData, nEme, nPal, nRad) << endl;
 	//cout << calculate_entropy(schedul, patientsData, nEme, nPal, nRad) << " ";
 	//cout << "Promedio: " << pr_delta(schedul, patientsData, nEme, nPal, nRad) << endl;
-	desv_delta(schedul, patientsData, nEme, nPal, nRad);
-	cout << endl;
+	//desv_delta(schedul, patientsData, nEme, nPal, nRad);
+	//cout << endl;
 	
 	return 0;
 }

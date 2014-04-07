@@ -1,7 +1,7 @@
 #!/bin/bash
 
-MainDir=/home/jp/Documents/radiotherapy/tests
-OutDir=/home/jp/Documents/radiotherapy/results/jit
+MainDir=/home/jp/Documents/tesis/radiotherapy/radiotherapy/tests
+OutDir=/home/jp/Documents/tesis/radiotherapy/radiotherapy/results/jit
 
 cd $MainDir
 

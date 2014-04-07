@@ -54,6 +54,15 @@ bool sort_category(PatientsData a, PatientsData b){
       return (a.category < b.category);
 }
 
+bool sort_category_day(PatientsData a, PatientsData b){
+	if(a.initialTreatmentDate == b.initialTreatmentDate){
+		return a.category < b.category;
+	}
+	
+	else
+		return (a.initialTreatmentDate < b.initialTreatmentDate);
+}
+
 bool sort_waiting(PatientsData a, PatientsData b){
       
       return (a.initialTreatmentDate < b.initialTreatmentDate);
@@ -144,28 +153,27 @@ int main(int argc, char *argv[])
 	      //Analizar los pacientes que se deben atener en el dia d
 		      for(int i = 0; i < (int)patients_waiting.size(); i++){
 			      //cout << "Inicial: " << patients_waiting[i].initialTreatmentDate << " actual " << d << endl;
- 			      if(patients_waiting[i].initialTreatmentDate > d){
- 				      break;
-			      }
+ 			      if(!(patients_waiting[i].initialTreatmentDate > d)){
 
-			      std::vector < std::pair< int, int > > s;
-			      s = global.jit_algorithm(patients_waiting[i].id, patientsData);
-			      
-			      if(s.size() == 0){
-				      //global.show_vector();
-				      cout << "PROBLEMA " << patients_waiting[i].id << endl;
-				      exit(0);
-				      //cout << global.time_machine_i(0, d) << endl;
-				      //Update lista
-				      std::sort(patients_waiting.begin(), patients_waiting.end(), sort_waiting);
-				      patients_waiting = order_patients(patients_waiting, d);
-				      quan_pat[d]++;
-				      //exit(0);
-			      }
-			      else{
-				      //Se puede insertar en la planificacion
-				      global.insert_schedul(patients_waiting[i].id, s, patientsData);
-				      patients_waiting = erase_patient(patients_waiting[i].id, patients_waiting);
+					std::vector < std::pair< int, int > > s;
+					s = global.jit_algorithm(patients_waiting[i].id, patientsData);
+					
+					if(s.size() == 0){
+						//global.show_vector();
+						cout << "PROBLEMA " << patients_waiting[i].id << endl;
+						exit(0);
+						//cout << global.time_machine_i(0, d) << endl;
+						//Update lista
+						std::sort(patients_waiting.begin(), patients_waiting.end(), sort_waiting);
+						patients_waiting = order_patients(patients_waiting, d);
+						quan_pat[d]++;
+						//exit(0);
+					}
+					else{
+						//Se puede insertar en la planificacion
+						global.insert_schedul(patients_waiting[i].id, s, patientsData);
+						patients_waiting = erase_patient(patients_waiting[i].id, patients_waiting);
+					}
 			      }
 		      }
 	      
@@ -189,7 +197,7 @@ int main(int argc, char *argv[])
 	      }
 
 	      if(d <= nDays){
-		      std::sort(patients_waiting.begin(), patients_waiting.end(), sort_category);
+		      std::sort(patients_waiting.begin(), patients_waiting.end(), sort_category_day);
 		      patients_waiting = order_patients(patients_waiting, d);
 	      }
 

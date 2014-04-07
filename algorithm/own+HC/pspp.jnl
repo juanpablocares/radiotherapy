@@ -1,0 +1,9 @@
+error: Identifier cannot be empty string.
+warning: Data is not valid as format F: Number followed by garbage.
+SAVE OUTFILE="/home/jp/Documents/tesis/radiotherapy/radiotherapy/estadistico/wilcoxon.sav".
+
+NPAR TEST
+	/WILCOXON own WITH  asap (PAIRED).
+
+SAVE OUTFILE="/home/jp/Documents/tesis/radiotherapy/radiotherapy/estadistico/wilcoxon.sav".
+
