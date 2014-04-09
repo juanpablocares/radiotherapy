@@ -287,11 +287,11 @@ int main(int argc, char *argv[])
 			cout << list_patients[i].machine << " " ;
 			cout << list_patients[i].first_time << " " ;
 			cout << list_patients[i].time_ses << " ";
-			for(int w = 0; w < working_days; w++){
-			      for(int s = 0; s < shifts; s++){
-				    cout << list_patients[i].availability[w][s] << " ";
-			      }
-			}
+			//for(int w = 0; w < working_days; w++){
+			//      for(int s = 0; s < shifts; s++){
+			//	    cout << list_patients[i].availability[w][s] << " ";
+			//      }
+			//}
 			cout << endl;
 		}
 		cout << endl;

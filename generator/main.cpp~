@@ -186,7 +186,7 @@ int main(int argc, char *argv[])
 	prob_ses.resize(categories);
 	for(int i = 0; i < categories; i++){
 		for(int j = 0; j < groups[i]; j++){
-		      cout << "Ses y prob: " << i << " " << j << endl;
+		      //cout << "Ses y prob: " << i << " " << j << endl;
 		      float aux2;
 		      cin >> aux2;
 		      int aux;
@@ -200,7 +200,7 @@ int main(int argc, char *argv[])
 	prob_mach.resize(categories);
 	for(int i = 0; i < categories; i++){
 		for(int j = 0; j < n_mach; j++){
-			cout << "Prob maq: " << i << " " << j << endl;
+			//cout << "Prob maq: " << i << " " << j << endl;
 			float aux; 
 			cin >> aux;
 			prob_mach[i].push_back(aux);
