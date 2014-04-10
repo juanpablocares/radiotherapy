@@ -21,7 +21,7 @@ find -name "*.rad" -print0 | \
          (while [  $COUNTER -le 20 ]; do
 	     out=$OutDir"/"${i/.rad/};
 	     out=$out"/out_"$COUNTER;
-	     ./../algorithm/own+HC/main $COUNTER 10 10 10 < ${i} > ${out};
+	     ./../algorithm/own+HC/main $COUNTER 100 50 1000 < ${i} > ${out};
              let COUNTER=COUNTER+1
          done)
     done)
