@@ -292,6 +292,8 @@ int main(int argc, char *argv[])
 	
 	vector<PatientsData> patientsData;
 	
+	int s_eme = 0, s_pal = 0;
+	
 	//Almacenamiento de información de los pacientes
 	for(int i = 0; i < nPal + nRad + nEme; i++){
 		PatientsData pat_aux;
@@ -307,6 +309,11 @@ int main(int argc, char *argv[])
 		pat_aux.first_session = pat_aux.duration_session + FIRST;
 		
 		patientsData.push_back(pat_aux);
+		
+		if(pat_aux.machine == 1)
+			s_eme += pat_aux.nSessions;
+		else if(pat_aux.machine == 2)
+			s_pal += pat_aux.nSessions;
 	}
 	
 	//Fin leer entrada
@@ -314,11 +321,11 @@ int main(int argc, char *argv[])
 	
 	//cout << nEme << " " << nPal << " " << nRad << " ";
 	//cout << calculate_delay(schedul, patientsData, nEme, nPal, nRad) << " ";
-	cout << calculate_delay(schedul, patientsData, nEme, nPal, nRad) << endl;
+	//cout << calculate_delay(schedul, patientsData, nEme, nPal, nRad) << endl;
 	//cout << calculate_entropy(schedul, patientsData, nEme, nPal, nRad) << " ";
 	//cout << "Promedio: " << pr_delta(schedul, patientsData, nEme, nPal, nRad) << endl;
 	//desv_delta(schedul, patientsData, nEme, nPal, nRad);
 	//cout << endl;
-	
+	cout << s_eme << " " << s_pal << endl;
 	return 0;
 }
