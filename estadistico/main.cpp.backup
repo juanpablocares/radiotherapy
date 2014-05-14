@@ -202,18 +202,12 @@ int calculate_delay(std::vector<std::vector < std::pair< int, int > > > schedul,
 	
 	for(int i = 0; i < (int)schedul.size(); i++){	  
 		delay += patientsData[i].days_delay;
-		if(i < nEme && schedul[i][0].first - patientsData[i].finalTreatmentDate > 0)
-		      delay_eme += schedul[i][0].first - patientsData[i].finalTreatmentDate;
-		else if(i < nEme && schedul[i][0].first - patientsData[i].finalTreatmentDate < 0)
-			cout << "LA CTM" << endl;
-		else if(i < nEme + nPal && schedul[i][0].first - patientsData[i].finalTreatmentDate > 0)
-		      delay_pal += schedul[i][0].first - patientsData[i].finalTreatmentDate;
-		else if(i < nEme + nPal && schedul[i][0].first - patientsData[i].finalTreatmentDate < 0)
-			cout << "LA CTM" << endl;
-		else if(i < nEme + nPal + nRad && schedul[i][0].first - patientsData[i].finalTreatmentDate > 0)
-		      delay_rad += schedul[i][0].first - patientsData[i].finalTreatmentDate;
-		else if(i < nEme + nPal + nRad && schedul[i][0].first - patientsData[i].finalTreatmentDate < 0)
-			cout << "LA CTM" << endl;
+		if(i < nEme && schedul[i][0].first - patientsData[i].initialTreatmentDate > 0)
+		      delay_eme += schedul[i][0].first - patientsData[i].initialTreatmentDate;
+		else if(i < nEme + nPal && schedul[i][0].first - patientsData[i].initialTreatmentDate > 0)
+		      delay_pal += schedul[i][0].first - patientsData[i].initialTreatmentDate;
+		else if(i < nEme + nPal + nRad && schedul[i][0].first - patientsData[i].initialTreatmentDate > 0)
+		      delay_rad += schedul[i][0].first - patientsData[i].initialTreatmentDate;
 	}
 	//cout << "Delay: " << endl;
 	//cout << delay_eme << " ";
@@ -266,11 +260,20 @@ void show_vector(std::vector<std::vector < std::pair< int, int > > > schedul){
 int main(int argc, char *argv[])
 {  
 	std::vector<std::vector < std::pair< int, int > > > schedul;
+	std::vector<int> use_machine_high;
+	std::vector<int> use_machine_low;
 	
 	int n, s, nEme, nPal, nRad;
 	
 	cin >> n;
 	schedul.resize(n);
+	use_machine_high.resize(500);
+	use_machine_low.resize(500);
+	
+	for(int i = 0; i < 500; i++){
+		use_machine_high[i] = 0;
+		use_machine_low[i] = 0;
+	}
 	
 	for(int i = 0; i < n; i++){
 		cin >> s;
@@ -283,6 +286,10 @@ int main(int argc, char *argv[])
 			cin >> mach;
 			
 			schedul[i].push_back(make_pair(day, mach));
+			if(j == 0)
+				use_machine[day]+= 15;
+			else
+				use_machine[day]+= 10;
 		}
 	}
 	//Leer entrada
@@ -297,6 +304,8 @@ int main(int argc, char *argv[])
 	cin >> nRad;
 	
 	vector<PatientsData> patientsData;
+	
+	int s_eme = 0, s_pal = 0;
 	
 	//Almacenamiento de información de los pacientes
 	for(int i = 0; i < nPal + nRad + nEme; i++){
@@ -313,17 +322,25 @@ int main(int argc, char *argv[])
 		pat_aux.first_session = pat_aux.duration_session + FIRST;
 		
 		patientsData.push_back(pat_aux);
+		
+		if(pat_aux.machine == 1)
+			s_eme += pat_aux.nSessions;
+		else if(pat_aux.machine == 2)
+			s_pal += pat_aux.nSessions;
 	}
 	
 	//Fin leer entrada
 	//show_vector(schedul);
 	
-	cout << nEme << " " << nPal << " " << nRad << " ";
-	cout << calculate_delay(schedul, patientsData, nEme, nPal, nRad) << " ";
+	//cout << nEme << " " << nPal << " " << nRad << " ";
+	//cout << calculate_delay(schedul, patientsData, nEme, nPal, nRad) << " ";
+	//cout << calculate_delay(schedul, patientsData, nEme, nPal, nRad) << endl;
 	//cout << calculate_entropy(schedul, patientsData, nEme, nPal, nRad) << " ";
 	//cout << "Promedio: " << pr_delta(schedul, patientsData, nEme, nPal, nRad) << endl;
-	desv_delta(schedul, patientsData, nEme, nPal, nRad);
-	cout << endl;
-	
+	//desv_delta(schedul, patientsData, nEme, nPal, nRad);
+	//cout << endl;
+	//cout << s_eme << " " << s_pal << endl;
+	for(int i = 1; i < 500; i++)
+		cout << "Dia " << i << ": " << use_machine[i] << endl;
 	return 0;
 }

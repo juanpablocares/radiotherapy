@@ -260,6 +260,7 @@ void show_vector(std::vector<std::vector < std::pair< int, int > > > schedul){
 int main(int argc, char *argv[])
 {  
 	std::vector<std::vector < std::pair< int, int > > > schedul;
+	std::vector<std::vector <int> > use_machine;
 	
 	int n, s, nEme, nPal, nRad;
 	
@@ -270,13 +271,23 @@ int main(int argc, char *argv[])
 		cin >> s;
 		
 		for(int j = 0; j < s; j++){
-			int day;
-			int mach;
+			int day = 0;
+			int mach = 0;
 			
 			cin >> day;
 			cin >> mach;
-			
+
 			schedul[i].push_back(make_pair(day, mach));
+			if(mach+1 > (int)use_machine.size())
+				use_machine.resize(mach+1);
+			
+			if(day+1 > (int)use_machine[mach].size())
+				use_machine[mach].resize(day+1,0);
+			
+			if(j == 0)
+				use_machine[mach][day] += 15;
+			else
+				use_machine[mach][day] += 10;
 		}
 	}
 	//Leer entrada
@@ -292,7 +303,7 @@ int main(int argc, char *argv[])
 	
 	vector<PatientsData> patientsData;
 	
-	int s_eme = 0, s_pal = 0, s_rad = 0;
+	int s_eme = 0, s_pal = 0;
 	
 	//Almacenamiento de información de los pacientes
 	for(int i = 0; i < nPal + nRad + nEme; i++){
@@ -320,12 +331,21 @@ int main(int argc, char *argv[])
 	//show_vector(schedul);
 	
 	//cout << nEme << " " << nPal << " " << nRad << " ";
-	//cout << calculate_delay(schedul, patientsData, nEme, nPal, nRad) << " ";
 	//cout << calculate_delay(schedul, patientsData, nEme, nPal, nRad) << endl;
-	//cout << calculate_entropy(schedul, patientsData, nEme, nPal, nRad) << " ";
+	cout << calculate_delay(schedul, patientsData, nEme, nPal, nRad) << " ";
+	cout << calculate_entropy(schedul, patientsData, nEme, nPal, nRad) << " ";
 	//cout << "Promedio: " << pr_delta(schedul, patientsData, nEme, nPal, nRad) << endl;
-	//desv_delta(schedul, patientsData, nEme, nPal, nRad);
-	//cout << endl;
-	cout << s_eme << " " << s_pal << endl;
+	desv_delta(schedul, patientsData, nEme, nPal, nRad);
+	cout << endl;
+	//cout << s_eme << " " << s_pal << endl;
+	
+// 	for(int i = 0; i < (int)use_machine.size(); i++){
+// 		for(int j = 0; j < (int)use_machine[i].size(); j++)
+// 			cout << use_machine[i][j] << " ";
+// 		if((int)use_machine[i].size() > 0)
+// 			cout << endl;
+// 	}
+	
+	
 	return 0;
 }
