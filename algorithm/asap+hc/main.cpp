@@ -1,0 +1,325 @@
+#include <iostream>
+#include <stdlib.h>
+#include "Individual.cpp"
+#include <algorithm>
+
+#define FIRST 5.0
+
+using namespace std; 
+
+//Generador de numeros aleatorios entre 0 y 1
+float random_0_1(){
+	return ((double)rand() / ((double) RAND_MAX));
+}
+
+int random(int min, int max){
+  
+	int r = min + (int)((float)(max - min) * random_0_1());
+	return r;
+}
+
+bool order_factor(pair<float, PatientsData> a, pair<float, PatientsData> b){
+      return (a.first > b.first);
+}
+
+vector <PatientsData> order_patients(vector <PatientsData> list, int day){
+      
+      vector<pair<float, PatientsData> > factor;
+  
+      for(int i = 0; i < (int)list.size(); i++){
+	      pair <float, PatientsData> aux_pair;
+	      
+	      int delay = 0;
+	      if(list[i].category == 1)
+		    delay = 2;
+	      else if(list[i].category == 2)
+		    delay = 14;
+	      else
+		    delay = 28;
+	      if(day < list[i].initialTreatmentDate)
+		    aux_pair.first = -1.0;
+	      else
+		    aux_pair.first = ((float)(day - list[i].initialTreatmentDate + 1))/((float)delay);
+	      
+	      aux_pair.second = list[i];
+	      factor.push_back(aux_pair);
+      }
+      
+      std::sort(factor.begin(), factor.end(), order_factor);
+      
+      list.clear();
+      for(int i = 0; i < (int)factor.size(); i++){
+	      PatientsData temporal_pat = factor[i].second;
+	      list.push_back(temporal_pat);
+      }
+      
+      return list;
+}
+
+bool sort_category_day(PatientsData a, PatientsData b){
+	if(a.initialTreatmentDate == b.initialTreatmentDate){
+		return a.category < b.category;
+	}
+	
+	else
+		return (a.initialTreatmentDate < b.initialTreatmentDate);
+}
+
+bool sort_category(PatientsData a, PatientsData b){
+      return (a.category < b.category);
+}
+
+bool sort_waiting(PatientsData a, PatientsData b){
+      
+      return (a.initialTreatmentDate < b.initialTreatmentDate);
+  
+      //return false;
+}
+
+bool sort_id(PatientsData a, PatientsData b){
+      
+      return (a.id < b.id);
+
+}
+
+vector <PatientsData> erase_patient(int id, vector <PatientsData> list){
+      
+      for(int i = 0; i < (int)list.size(); i++){
+	      if(list[i].id == id){
+		      list.erase(list.begin() + i);
+		      return list;
+	      }
+      }
+      
+      return list;
+}
+
+
+int main(int argc, char *argv[])
+{ 
+      //Parametros algoritmo
+      int seed = atoi(argv[1]);
+      int iterations1 = atoi(argv[2]);
+      int iterations2 = atoi(argv[3]);
+      int iterations3 = atoi(argv[4]);
+      
+      int nDays;
+      //Fin parametros algoritmo
+      
+      //Lectura de archivo de entrada
+      
+      //Numero de dias a planificar
+      cin >> nDays;
+      
+      //Tiempo disponible por dia de planificacion
+      float tShift;
+      cin >> tShift;
+      
+      //Numero de maquinas de baja energia
+      int low_machine;
+      cin >> low_machine;
+      
+      //Numero de maquinas de alta energia
+      int high_machine;
+      cin >> high_machine;
+      
+      //Fin lectura archivo de entrada
+      
+      
+      
+      
+      
+      
+      
+      
+
+      
+      
+      //Inicializar semilla
+      srand(seed);
+
+      //Variable que almacenara la mejor solucion global del algoritmo
+      Individual global;
+      
+      //Lectura de informacion de los pacientes
+      vector <PatientsData> patientsData;
+      //Pacientes que estan en lista de espera por insuficiencia de maquinas en el dia especificado
+      vector <PatientsData> patients_waiting;
+      //REVISAR MEMORIA ACA, YA QUE PIDO MAS DE LO NECESARIO
+      vector <int> quan_pat(600, 0);
+      
+      //Inicializar parametros del individuo
+      global.set_params(tShift, 600, low_machine, high_machine, 1);
+      //Vector que contiene el tiempo disponible por cada maquina
+      vector<int> time_machines(low_machine + high_machine, tShift);
+      //Inicializar parametros de las maquinas
+      global.set_time_machines(time_machines, 600, low_machine + high_machine);
+      
+      //Pacientes ya agendados
+      vector <PatientsData> scheduled_pat;
+      
+      int id = 0;
+      //int sum = 0;
+      int count = 0;
+      int total_pat_global = 0;
+      for(int d = 1; d <= nDays || !patients_waiting.empty(); d++){
+		int total_pat;
+		//cout << d << endl;
+		if(d <= nDays){
+			cin >> total_pat;
+			total_pat_global += total_pat;
+			// cout << total_pat << endl;
+		}
+		      
+		//Almacenamiento de información de los pacientes
+		for(int i = 0; i < total_pat && d <= nDays; i++){
+			PatientsData pat_aux;
+			id++;
+			pat_aux.id = id;
+			cin >> pat_aux.category;
+			cin >> pat_aux.initialTreatmentDate;
+			cin >> pat_aux.finalTreatmentDate;
+			pat_aux.days_delay = 0;
+			cin >> pat_aux.nSessions;
+			cin >> pat_aux.interruptions;
+			cin >> pat_aux.machine;
+			cin >> pat_aux.duration_session;
+			pat_aux.first_session = pat_aux.duration_session + FIRST;
+			patientsData.push_back(pat_aux);
+			patients_waiting.push_back(pat_aux);
+			quan_pat[pat_aux.initialTreatmentDate - 1]++;
+		}
+
+		if(d <= nDays){
+			std::sort(patients_waiting.begin(), patients_waiting.end(), sort_waiting);
+			patients_waiting = order_patients(patients_waiting, d);
+		}
+
+		//Analizar los pacientes que se deben atener en el dia d
+		for(int i = 0; i < (int)patients_waiting.size(); i++){
+		  
+			if(!(patients_waiting[i].initialTreatmentDate > d)){
+			
+				std::vector < std::pair< int, int > > s;
+				int local_machine = patients_waiting[i].machine;
+				/*if(patients_waiting[i].machine == 3){
+				      float r = random_0_1();
+				      if(r < 0.5)
+					    local_machine = 1;
+				      else
+					    local_machine = 2;
+				}*/
+				      
+				s = global.asap_algorithm(patients_waiting[i].id, local_machine, patientsData);
+				
+				if(s.size() == 0){
+					count++;
+					std::sort(patients_waiting.begin(), patients_waiting.end(), sort_waiting);
+					patients_waiting = order_patients(patients_waiting, d);
+					quan_pat[d]++;
+				}
+				else{
+					//Se puede insertar en la planificacion
+					global.insert_schedul(patients_waiting[i].id, s, patientsData);
+					scheduled_pat.push_back(patients_waiting[i]);
+					std::sort(scheduled_pat.begin(), scheduled_pat.end(), sort_id);
+					patients_waiting = erase_patient(patients_waiting[i].id, patients_waiting);
+				}
+			}
+		}
+
+		if(d != 0 && d % 5 == 0){
+			global.update_fitness(patientsData);
+			//Aplicar HC
+			for(int i = 0; i < iterations1 && (int)patients_waiting.size() > 0; i++){
+				//cout << "IT1: " << i << endl;
+				vector <PatientsData> local_waiting = patients_waiting;
+				vector <PatientsData> local_scheduled = scheduled_pat;
+				Individual local;
+				local.copy(global);
+				int num_w = random(1, (int)local_waiting.size());
+				int num_sch = random(1, (int)local_scheduled.size());
+				//cout << local_waiting.size() << " " << local_scheduled.size() << endl;
+				if(local.swap_list_schedul(d-4, d, local_waiting[num_w-1].id, local_waiting, local_scheduled[num_sch-1].id, local_scheduled, patientsData)){
+					  local.update_fitness(patientsData);
+					  local_waiting = order_patients(local_waiting, d);
+					  std::sort(local_scheduled.begin(), local_scheduled.end(), sort_id);
+					  //cout << "entro" << endl;
+					  int num_w_insert = random(1, (int)local_waiting.size());
+					  if(local.insert_list_to_schedul(d-4, d, local_waiting[num_w_insert-1].id, local_waiting, local_scheduled, patientsData)){
+						local.update_fitness(patientsData);
+						if(local.get_fitness() <= global.get_fitness()){
+							//cout << "Primero: " << local.get_fitness() << " " << global.get_fitness() << endl;
+							global.copy(local);
+							patients_waiting = local_waiting;
+							patients_waiting = order_patients(patients_waiting, d);
+							scheduled_pat = local_scheduled;
+							std::sort(scheduled_pat.begin(), scheduled_pat.end(), sort_id);
+							global.update_fitness(patientsData);
+						}
+					  }
+				}
+				local_waiting.clear();
+				local_scheduled.clear();
+			}
+			
+			for(int i = 0; i < iterations2; i++){
+				//cout << "IT2: " << i << endl;
+				vector <PatientsData> local_waiting = patients_waiting;
+				vector <PatientsData> local_scheduled = scheduled_pat;
+				Individual local;
+				local.copy(global);
+				global.update_fitness(patientsData);
+				int num_p1 = random(1, (int)local_scheduled.size());
+				int num_p2 = random(1, (int)local_scheduled.size());
+				
+				if(local.swap_schedul_schedul(d-4, d, local_scheduled[num_p1-1].id, local_scheduled[num_p2-1].id, patientsData)){
+					local.update_fitness(patientsData);
+					if(local.get_fitness() <= global.get_fitness()){
+						//cout << "Segundo: " << local.get_fitness() << " " << global.get_fitness() << endl;
+						global.copy(local);
+						patients_waiting = local_waiting;
+						patients_waiting = order_patients(patients_waiting, d);
+						scheduled_pat = local_scheduled;
+						std::sort(scheduled_pat.begin(), scheduled_pat.end(), sort_id);
+						global.update_fitness(patientsData);
+					}
+				}
+				local_waiting.clear();
+				local_scheduled.clear();
+			}
+			
+			for(int i = 0; i < iterations3; i++){
+				  //cout << "IT3: " << i << endl;
+				  vector <PatientsData> local_waiting = patients_waiting;
+				  vector <PatientsData> local_scheduled = scheduled_pat;
+				  Individual local;
+				  local.copy(global);
+				  int num_p = random(1, (int)local_scheduled.size());
+				  
+				  if(local.shift_patient(d-4, d, local_scheduled[num_p-1].id, patientsData)){
+					  local.update_fitness(patientsData);
+					  if(local.get_fitness() <= global.get_fitness()){
+						  //cout << "Tercero: " << local.get_fitness() << " " << global.get_fitness() << endl;
+						  global.copy(local);
+						  patients_waiting = local_waiting;
+						  std::sort(patients_waiting.begin(), patients_waiting.end(), sort_waiting);
+						  patients_waiting = order_patients(patients_waiting, d);
+						  scheduled_pat = local_scheduled;
+						  std::sort(scheduled_pat.begin(), scheduled_pat.end(), sort_id);
+						  global.update_fitness(patientsData);
+					  }
+				  }
+				  local_waiting.clear();
+				  local_scheduled.clear();
+			}
+		}
+
+      }
+      //cout << endl << "Solucion" << endl;
+      //cout << "Urgentes: " << global.getEmergency() << endl;
+      //cout << "Paliativos: " << global.getPalliative() << endl;
+      //cout << "Radicales: " << global.getRadical() << endl;
+      global.show_vector(global.getEmergency(), global.getPalliative(), global.getRadical(), patientsData);
+      return 0;
+}

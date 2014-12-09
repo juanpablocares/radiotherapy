@@ -1,6 +1,6 @@
 #!/bin/bash
 
-S=5
+S=10
 MainDir=/home/jp/Documents/radiotherapy/generator/
 OutDir=output
 

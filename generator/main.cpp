@@ -117,11 +117,11 @@ int main(int argc, char *argv[])
 	
 	int working_days;
 	cin >> working_days;
-	cout << working_days << " ";
+	//cout << working_days << " ";
 	
 	int shifts;
 	cin >> shifts;
-	cout << shifts << " ";
+	//cout << shifts << " ";
 	
 	int PAT_DAY;
 	cin >> PAT_DAY;
@@ -135,7 +135,7 @@ int main(int argc, char *argv[])
 	
 	int n_mach;
 	cin >> n_mach;
-	cout << n_mach  << " ";
+	//cout << n_mach  << " ";
 	
 	vector<int>machines;
 	for(int i = 0; i < n_mach; i++){
@@ -285,13 +285,13 @@ int main(int argc, char *argv[])
 			cout << list_patients[i].sessions << " " ;
 			cout << list_patients[i].interruptions << " " ;
 			cout << list_patients[i].machine << " " ;
-			cout << list_patients[i].first_time << " " ;
+			//cout << list_patients[i].first_time << " " ;
 			cout << list_patients[i].time_ses << " ";
-			//for(int w = 0; w < working_days; w++){
-			//      for(int s = 0; s < shifts; s++){
-			//	    cout << list_patients[i].availability[w][s] << " ";
-			//      }
-			//}
+			/*for(int w = 0; w < working_days; w++){
+			      for(int s = 0; s < shifts; s++){
+				    cout << list_patients[i].availability[w][s] << " ";
+			      }
+			}*/
 			cout << endl;
 		}
 		cout << endl;

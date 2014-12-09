@@ -149,13 +149,6 @@ int main(int argc, char *argv[])
 					std::vector < std::pair< int, int > > s;
 					
 					int local_machine = patients_waiting[i].machine;
-					if(patients_waiting[i].machine == 3){
-					      float r = random_0_1();
-					      if(r < 0.5)
-						    local_machine = 1;
-					      else
-						    local_machine = 2;
-					}
 					
 					s = global.asap_algorithm(patients_waiting[i].id, local_machine, patientsData);
 					

@@ -156,7 +156,7 @@ int main(int argc, char *argv[])
 			week = false;
 	      
 	      //Analizar los pacientes que se deben atener en el dia d
-		      for(int i = 0; i < week && (int)patients_waiting.size(); i++){
+		      for(int i = 0; week && (int)patients_waiting.size(); i++){
 			      //cout << "Inicial: " << patients_waiting[i].initialTreatmentDate << " actual " << d << endl;
  			      if(!(patients_waiting[i].initialTreatmentDate > d)){
 
